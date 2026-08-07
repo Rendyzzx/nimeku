@@ -1,0 +1,2148 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Cyronime — Portal Layanan Premium</title>
+    <link rel="icon" id="favicon-link" href="data:,">
+
+    <!-- Axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: 'var(--color-bg)',
+                        darkcard: '#181A22',
+                        darkinput: 'var(--color-bg)',
+                        neonGreen: 'var(--color-accent)',
+                        cyberYellow: 'var(--color-primary)',
+                        waGreen: '#25D366'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Space Grotesk', 'sans-serif'],
+                        brand: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-primary: #D6A755;
+            --color-accent: #5C8AA6;
+            --color-bg: #0B0C10;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--color-bg);
+            color: #FFFFFF;
+            position: relative;
+        }
+
+        /* Subtle grid background — gives depth without being noisy */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 230, 118, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 208, 40, 0.015) 1px, transparent 1px);
+            background-size: 40px 40px, 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+        }
+
+        /* Vignette + subtle glow for that "lived-in" feel */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center top, rgba(0, 230, 118, 0.04), transparent 60%),
+                        radial-gradient(ellipse at center bottom, rgba(255, 208, 40, 0.03), transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        .nb-shadow {
+            box-shadow: 4px 4px 0px 0px #000000;
+        }
+
+        .nb-shadow-lg {
+            box-shadow: 6px 6px 0px 0px #000000;
+        }
+
+        .nb-shadow-sm {
+            box-shadow: 2.5px 2.5px 0px 0px #000000;
+        }
+
+        .nb-shadow-button {
+            box-shadow: 3.5px 3.5px 0px 0px #000000;
+            transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .nb-shadow-button:active:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px #000000;
+        }
+
+        .nb-shadow-button:not(:disabled):hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px 0px #000000;
+        }
+
+        .nb-spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid #181A22;
+            border-top-color: var(--color-accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .pulse-live {
+            animation: pulseGlow 1.5s ease-in-out infinite;
+        }
+
+        /* Modal entrance — scale + fade with bounce */
+        @keyframes modalIn {
+            0% { opacity: 0; transform: scale(0.92) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-enter {
+            animation: modalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Staggered fade-in for modal children */
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .stagger-1 { animation: fadeUp 0.4s ease 0.1s both; }
+        .stagger-2 { animation: fadeUp 0.4s ease 0.2s both; }
+        .stagger-3 { animation: fadeUp 0.4s ease 0.3s both; }
+
+        /* Custom scrollbar for inbox lists */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0F1015; }
+        ::-webkit-scrollbar-thumb { background: var(--color-accent); border-radius: 4px; }
+
+        /* Selection color */
+        ::selection { background: var(--color-primary); color: #000; }
+
+        /* ---- Subtle polish ---- */
+        /* Fine grain texture overlay — barely visible, kills the flat AI look */
+        body::before {
+            background-image:
+                linear-gradient(rgba(0, 230, 118, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 208, 40, 0.015) 1px, transparent 1px);
+        }
+
+        /* Noise grain — injects organic imperfection */
+        .grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.035;
+            mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* Slightly warmer card surface with depth */
+        .bg-darkcard {
+            background-image: linear-gradient(180deg, rgba(255,255,255,0.012) 0%, rgba(0,0,0,0.018) 100%);
+        }
+
+        /* Refined focus — subtle inner glow instead of harsh outline */
+        input:focus, textarea:focus {
+            box-shadow: 0 0 0 1px rgba(0, 230, 118, 0.25), 0 0 12px -2px rgba(0, 230, 118, 0.15);
+        }
+
+        /* Smoother button press feedback */
+        .nb-shadow-button:not(:disabled):active {
+            transition: transform 0.06s ease, box-shadow 0.06s ease;
+        }
+
+        /* Gentle entrance for main content */
+        @keyframes contentFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        main {
+            animation: contentFadeIn 0.5s ease-out;
+        }
+
+        /* Tighter letter spacing on body text for readability */
+        p, span, label {
+            letter-spacing: -0.003em;
+        }
+
+        /* Slightly rounded scrollbar thumb */
+        ::-webkit-scrollbar-thumb {
+            border-radius: 6px;
+            background: #1a2e23;
+        }
+
+        /* Tab active state — subtle bottom border accent */
+        .tab-active-glow {
+            position: relative;
+        }
+        .tab-active-glow::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: currentColor;
+            opacity: 0.3;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white flex flex-col items-center p-4 sm:p-6 relative">
+    <div class="grain"></div>
+
+    <!-- OVERLAY MODE MAINTENANCE (dikontrol lewat /maintenance di Telegram bot) -->
+    <div id="maintenance-overlay" class="fixed inset-0 bg-darkbg z-[200] hidden flex-col items-center justify-center p-6 text-center">
+        <div class="relative w-20 h-20 mx-auto mb-5">
+            <img src="https://base44.app/api/apps/6a75119d8897b55540d7e5b4/files/mp/public/6a75119d8897b55540d7e5b4/e49d002b0_f3ee9cabd_36dcd09f2f8593db6fc7e1c52e3e0506.jpg" alt="Admin" class="w-20 h-20 rounded-full object-cover border-2 border-black nb-shadow">
+            <span class="absolute -bottom-1 -right-1 w-7 h-7 bg-cyberYellow border-2 border-black rounded-full flex items-center justify-center text-xs">🛠️</span>
+        </div>
+        <h2 class="font-heading font-extrabold text-xl text-white tracking-tight mb-2">Bentar ya, lagi dibenerin</h2>
+        <p id="maintenance-message" class="text-sm font-medium text-slate-400 max-w-sm mb-5 leading-relaxed">Server sedang dirapikan sebentar. Coba buka lagi beberapa saat lagi ya.</p>
+        <div class="inline-flex items-center gap-2 bg-darkcard border-2 border-black px-4 py-2 rounded-xl nb-shadow-sm">
+            <span id="maintenance-admin-name" class="text-xs font-bold text-slate-300">— Akirax</span>
+        </div>
+        <p class="mt-8 text-[11px] text-slate-500 font-medium">&copy; Cyronime Premium Portal</p>
+    </div>
+
+    <a href="/" class="w-full max-w-md md:max-w-lg lg:max-w-xl mb-2 inline-flex items-center gap-2 bg-darkcard border-2 border-black rounded-xl px-4 py-2.5 text-xs font-bold text-slate-300 hover:text-cyberYellow transition-colors nb-shadow-sm relative z-10">
+        <i class="fas fa-arrow-left text-sm"></i>
+        <span>Kembali ke Portal</span>
+    </a>
+    <!-- BANNER PERINGATAN / PENGUMUMAN (dikontrol lewat bot Telegram) -->
+    <div id="site-warning-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-start gap-2">
+        <span id="site-warning-icon" class="text-lg leading-none"></span>
+        <span id="site-warning-text" class="flex-1"></span>
+    </div>
+
+    <!-- BANNER PROMO (dikontrol lewat /setpromo di Telegram bot) -->
+    <div id="site-promo-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 bg-cyberYellow text-black border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-center gap-2">
+        <span class="text-lg leading-none">🎉</span>
+        <span id="site-promo-text" class="flex-1"></span>
+    </div>
+
+    <!-- HEADER / BRANDING -->
+    <header class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-3 mb-4 text-center relative z-10">
+        <h1 id="brand-name-text" class="font-brand font-extrabold text-3xl sm:text-4xl tracking-wide text-white mb-1.5">Cyronime</h1>
+        <span id="brand-badge-text" class="hidden"></span>
+        <p id="brand-tagline-text" class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Layanan Aktivasi Premium</p>
+
+        <!-- STOK (dikontrol lewat /setstock di Telegram bot) -->
+        <div id="site-stock-badge" class="hidden mt-2 inline-flex items-center gap-1.5 bg-darkcard border-2 border-black px-3 py-1 rounded-lg text-[10px] font-bold text-slate-300 uppercase tracking-wider nb-shadow-sm">
+            <i class="fas fa-box text-cyberYellow"></i>
+            <span id="site-stock-text"></span>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER CARD -->
+    <main class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-1 space-y-4 z-10">
+
+        <!-- MODE TAB SWITCHER -->
+        <div class="grid grid-cols-3 gap-1.5 bg-darkcard p-1.5 border-2.5 border-black rounded-2xl nb-shadow">
+            <button type="button" id="tab-pribadi" onclick="requestMode('pribadi')" class="relative py-2.5 px-1 rounded-xl font-extrabold text-[11px] border-2 border-black transition-all bg-cyberYellow text-black nb-shadow-sm cursor-pointer truncate">
+                <i class="fas fa-user mr-1"></i> <span id="tab-pribadi-label">PRIBADI</span>
+                <span id="tab-pribadi-badge" class="hidden absolute -top-2 -right-1.5 bg-neonGreen text-black text-[8px] font-black px-1.5 py-0.5 rounded-full border-2 border-black"></span>
+            </button>
+            <button type="button" id="tab-generate" onclick="requestMode('generate')" class="relative py-2.5 px-1 rounded-xl font-extrabold text-[11px] border-2 border-black transition-all bg-darkbg text-slate-400 cursor-pointer truncate">
+                <i class="fas fa-robot mr-1"></i> <span id="tab-generate-label">GENERATE</span>
+                <span id="tab-generate-badge" class="hidden absolute -top-2 -right-1.5 bg-neonGreen text-black text-[8px] font-black px-1.5 py-0.5 rounded-full border-2 border-black"></span>
+            </button>
+            <button type="button" id="tab-buyer" onclick="requestMode('buyer')" class="relative py-2.5 px-1 rounded-xl font-extrabold text-[11px] border-2 border-black transition-all bg-darkbg text-slate-400 cursor-pointer truncate">
+                <i class="fas fa-key mr-1"></i> <span id="tab-buyer-label">BUYER MAIL</span>
+                <span id="tab-buyer-badge" class="hidden absolute -top-2 -right-1.5 bg-neonGreen text-black text-[8px] font-black px-1.5 py-0.5 rounded-full border-2 border-black"></span>
+            </button>
+        </div>
+
+        <!-- CORE INTERACTION CARD -->
+        <div class="bg-darkcard border-2.5 border-black rounded-2xl p-5 sm:p-7 nb-shadow-lg relative overflow-hidden">
+            
+            <!-- ALERT NOTIFICATION BOX -->
+            <div id="alert-box" class="hidden mb-5 p-3.5 border-2 border-black rounded-xl text-xs font-bold flex items-center gap-2.5 shadow-[2px_2px_0px_0px_#000]">
+                <i id="alert-icon" class="fas fa-info-circle text-base"></i>
+                <div id="alert-msg" class="leading-snug"></div>
+            </div>
+
+            <!-- ==================== MODE 1: AKUN PRIBADI ==================== -->
+            <div id="section-pribadi" class="space-y-4">
+                <!-- STEP INDICATOR BADGES -->
+                <div id="step-indicator" class="flex items-center justify-between mb-5 pb-4 border-b-2 border-black/80">
+                    <div id="step-1-badge" class="flex items-center gap-2 bg-cyberYellow text-black border-2 border-black px-3 py-1.5 rounded-xl text-xs font-bold nb-shadow-sm">
+                        <span class="w-5 h-5 rounded-md bg-black text-white flex items-center justify-center text-[11px]">1</span>
+                        <span>Email</span>
+                    </div>
+                    <i class="fas fa-arrow-right text-xs text-slate-500"></i>
+                    <div id="step-2-badge" class="flex items-center gap-2 bg-darkbg text-slate-400 border-2 border-black px-3 py-1.5 rounded-xl text-xs font-bold">
+                        <span class="w-5 h-5 rounded-md bg-slate-800 text-slate-400 border border-slate-700 flex items-center justify-center text-[11px]">2</span>
+                        <span>Verifikasi URL</span>
+                    </div>
+                </div>
+
+                <!-- FORM 1: EMAIL INPUT PRIBADI -->
+                <form id="form-email" onsubmit="handleFormEmailSubmit(event)" class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-xs font-extrabold uppercase tracking-wider text-slate-200 mb-2">
+                            <i class="fas fa-envelope mr-1 text-cyberYellow"></i> Email Akun Alight Motion
+                        </label>
+                        <input type="email" id="email" placeholder="user@example.com" 
+                            class="w-full p-3.5 bg-darkinput border-2 border-black rounded-xl text-white font-semibold placeholder-slate-500 outline-none focus:border-neonGreen focus:ring-1 focus:ring-neonGreen nb-shadow-sm text-sm">
+                        <p class="text-[11px] font-medium text-slate-400 mt-2">
+                            Masukkan email terdaftar yang belum di-upgrade ke premium.
+                        </p>
+                    </div>
+
+                    <button type="submit" id="btn-submit-email"
+                        class="w-full py-3.5 px-4 bg-neonGreen hover:bg-emerald-400 border-2 border-black font-extrabold text-black rounded-xl text-sm nb-shadow-button flex items-center justify-center gap-2 uppercase tracking-wide transition-all cursor-pointer">
+                        <span>Minta Kode Verifikasi</span>
+                        <i id="btn-icon-email" class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+
+                <!-- FORM 2: VERIFICATION LINK PRIBADI -->
+                <form id="form-verify" onsubmit="handleFormVerifySubmit(event)" class="space-y-4 hidden">
+                    <div class="p-3 bg-darkinput border-2 border-black rounded-xl text-xs font-bold flex items-center justify-between">
+                        <span class="text-slate-400">Email Target:</span>
+                        <strong id="display-email" class="font-mono text-neonGreen">user@example.com</strong>
+                    </div>
+
+                    <div>
+                        <label for="verify-link" class="block text-xs font-extrabold uppercase tracking-wider text-slate-200 mb-2">
+                            <i class="fas fa-link mr-1 text-cyberYellow"></i> URL / Link Verifikasi (HTTPS)
+                        </label>
+                        <input type="url" id="verify-link" placeholder="https://example.com/verify/xxx" 
+                            class="w-full p-3.5 bg-darkinput border-2 border-black rounded-xl text-white font-semibold placeholder-slate-500 outline-none focus:border-neonGreen focus:ring-1 focus:ring-neonGreen nb-shadow-sm text-sm">
+                        <p class="text-[11px] font-medium text-slate-400 mt-2">
+                            Salin link dari email pesan Alight Motion (Cek folder Spam).
+                        </p>
+                    </div>
+
+                    <div class="flex gap-2.5 pt-1">
+                        <button type="button" id="btn-back-step1" onclick="setStep(1)"
+                            class="w-1/3 py-3 px-3 bg-slate-800 hover:bg-slate-700 border-2 border-black font-bold text-slate-200 rounded-xl text-xs nb-shadow-button cursor-pointer">
+                            <i class="fas fa-arrow-left mr-1"></i> Kembali
+                        </button>
+                        <button type="submit" 
+                            class="w-2/3 py-3 px-4 bg-neonGreen hover:bg-emerald-400 border-2 border-black font-extrabold text-black rounded-xl text-sm nb-shadow-button flex items-center justify-center gap-1.5 uppercase tracking-wide cursor-pointer">
+                            <span>Aktifkan Premium</span>
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ==================== MODE 2: AKUN GENERATE (AUTO-ACTIVATION) ==================== -->
+            <div id="section-generate" class="space-y-4 hidden">
+                
+                <!-- Pilihan Server Selector -->
+                <div class="space-y-2">
+                    <label class="block text-[11px] font-extrabold uppercase tracking-wider text-slate-300">
+                        <i class="fas fa-server text-cyberYellow mr-1"></i> Pilih Engine Tempmail:
+                    </label>
+                    <div class="grid grid-cols-2 gap-2 bg-darkinput p-1 border-2 border-black rounded-xl">
+                        <button type="button" id="srv-tempail" onclick="setServerEngine('tempail')" class="py-1.5 px-2 rounded-lg text-xs font-bold border border-black bg-cyberYellow text-black cursor-pointer">
+                            Server 1 (Tempail)
+                        </button>
+                        <button type="button" id="srv-tempbox" onclick="setServerEngine('tempbox')" class="py-1.5 px-2 rounded-lg text-xs font-bold text-slate-400 cursor-pointer">
+                            Server 2 (Tempbox)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 1: Tombol Generate Utama -->
+                <div id="gen-step-1-box">
+                    <button type="button" id="btn-gen-email" onclick="handleGenerateEmailScraper()"
+                        class="w-full py-3.5 px-4 bg-cyberYellow hover:bg-amber-400 border-2 border-black font-extrabold text-black rounded-xl text-sm nb-shadow-button flex items-center justify-center gap-2 uppercase tracking-wide cursor-pointer">
+                        <i class="fas fa-bolt text-black"></i>
+                        <span>Generate & Auto-Aktifkan</span>
+                    </button>
+                </div>
+
+                <!-- Step 2 & 3: Tampilan Hasil Generate Email & Inbox -->
+                <div id="gen-email-box" class="hidden space-y-4 pt-1">
+                    
+                    <!-- Status Live Auto Poll -->
+                    <div id="auto-status-card" class="p-3 bg-neonGreen/10 border-2 border-black rounded-xl text-xs font-bold flex items-center justify-between">
+                        <span class="flex items-center gap-2 text-neonGreen">
+                            <i id="auto-status-icon" class="fas fa-spinner animate-spin"></i>
+                            <span id="auto-status-text">Memeriksa pesan otomatis...</span>
+                        </span>
+                        <span id="auto-timer-badge" class="bg-black text-neonGreen text-[10px] px-2 py-0.5 rounded border border-neonGreen/40 font-mono">0s</span>
+                    </div>
+
+                    <!-- Box Utama Email Tergenerate -->
+                    <div class="bg-darkinput border-2 border-black rounded-xl p-3.5 space-y-3 nb-shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-extrabold uppercase text-slate-400 tracking-wider">
+                                <i class="fas fa-at text-neonGreen mr-1"></i> Email Temp Aktif
+                            </span>
+                            <span id="badge-email-status" class="bg-neonGreen/20 text-neonGreen border border-black text-[10px] font-bold px-2 py-0.5 rounded-full pulse-live flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-neonGreen"></span> Terhubung
+                            </span>
+                        </div>
+
+                        <!-- Email Display & Quick Copy Button -->
+                        <div class="flex gap-2">
+                            <input type="text" id="gen-email-input" readonly 
+                                class="w-full p-3 bg-black border-2 border-black rounded-xl text-neonGreen font-mono font-extrabold text-xs outline-none tracking-wide">
+                            <button type="button" onclick="copyText('gen-email-input', 'Email Temp')" 
+                                class="px-3.5 bg-neonGreen hover:bg-emerald-400 border-2 border-black text-black font-extrabold text-xs rounded-xl nb-shadow-button flex items-center gap-1 cursor-pointer">
+                                <i class="fas fa-copy"></i>
+                                <span class="hidden sm:inline">Salin</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Inbox Toolbar & Status -->
+                    <div class="flex items-center justify-between gap-2 pt-1">
+                        <div class="text-xs font-extrabold text-slate-200">
+                            <i class="fas fa-inbox text-cyberYellow mr-1"></i> Kotak Masuk
+                        </div>
+                        
+                        <button type="button" onclick="fetchInboxScraper()" 
+                            class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border-2 border-black font-extrabold text-white rounded-xl text-xs nb-shadow-button flex items-center gap-1.5 cursor-pointer">
+                            <i id="icon-refresh-inbox" class="fas fa-sync-alt text-cyberYellow"></i>
+                            <span>Cek Manual</span>
+                        </button>
+                    </div>
+
+                    <!-- Live Inbox Messages List -->
+                    <div class="p-3 bg-darkinput border-2 border-black rounded-xl space-y-2">
+                        <div class="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-800 pb-2">
+                            <span id="inbox-status">Auto-polling aktif... Sistem akan otomatis mengekstrak & mengaktifkan premium.</span>
+                        </div>
+                        
+                        <div id="inbox-list" class="space-y-2 text-xs pt-1">
+                            <div class="text-center py-4 text-slate-500 text-[11px]">
+                                <i class="fas fa-spinner animate-spin mr-1"></i> Menunggu email verifikasi masuk dari Alight Motion...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Form Verifikasi URL Manual Fallback -->
+                    <form id="form-gen-verify" onsubmit="handleGenVerifySubmit(event)" class="space-y-3 pt-2">
+                        <div>
+                            <label for="gen-verify-link" class="block text-xs font-extrabold uppercase tracking-wider text-slate-200 mb-1.5 flex items-center justify-between">
+                                <span><i class="fas fa-link text-cyberYellow mr-1"></i> Link Verifikasi (HTTPS):</span>
+                                <span id="auto-link-badge" class="hidden text-[10px] text-neonGreen font-bold bg-neonGreen/10 px-2 py-0.5 rounded border border-neonGreen/30">
+                                    ✓ Auto-Filled
+                                </span>
+                            </label>
+                            <input type="url" id="gen-verify-link" placeholder="https://example.com/verify/xxx" 
+                                class="w-full p-3.5 bg-darkinput border-2 border-black rounded-xl text-white font-semibold placeholder-slate-500 outline-none focus:border-neonGreen focus:ring-1 focus:ring-neonGreen nb-shadow-sm text-sm">
+                        </div>
+
+                        <button type="submit" 
+                            class="w-full py-3.5 px-4 bg-neonGreen hover:bg-emerald-400 border-2 border-black font-extrabold text-black rounded-xl text-sm nb-shadow-button flex items-center justify-center gap-1.5 uppercase tracking-wide cursor-pointer">
+                            <span>Aktifkan Premium Manual</span>
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+                    </form>
+
+                    <!-- TOMBOL BUKA KEMBALI POPUP BUYER -->
+                    <button type="button" onclick="openBuyerModal()" 
+                        class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 border-2 border-black font-extrabold text-cyberYellow rounded-xl text-xs nb-shadow-button flex items-center justify-center gap-1.5 uppercase cursor-pointer">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Lihat Format Pesan Buyer</span>
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- ==================== MODE 3: CEK MAILBOX (KHUSUS BUYER) ==================== -->
+            <div id="section-buyer" class="space-y-4 hidden">
+                <div class="p-3 bg-[#111827] border-2 border-black rounded-xl text-xs space-y-1.5">
+                    <div class="flex items-center justify-between text-sky-400 font-extrabold uppercase">
+                        <span><i class="fas fa-shield-alt mr-1"></i> Cek Mailbox (Khusus Buyer)</span>
+                        <span class="bg-sky-400/20 text-sky-300 border border-sky-400/30 text-[10px] px-2 py-0.5 rounded">VIP</span>
+                    </div>
+                    <p class="text-[11px] font-medium text-slate-300">
+                        Masukan Token Email/Secret yang diberikan untuk memeriksa kotak masuk & membaca pesan verifikasi.
+                    </p>
+                </div>
+
+                <!-- Buyer Token Input Form -->
+                <div class="space-y-3">
+                    <div>
+                        <label for="buyer-token-input" class="block text-xs font-extrabold uppercase tracking-wider text-slate-200 mb-1.5">
+                            <i class="fas fa-key text-cyberYellow mr-1"></i> Token Email / Secret Mailbox:
+                        </label>
+                        <input type="text" id="buyer-token-input" placeholder="Masukkan Token Email (misal: bN6KF...)" 
+                            class="w-full p-3.5 bg-darkinput border-2 border-black rounded-xl text-white font-mono font-bold placeholder-slate-500 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 nb-shadow-sm text-sm">
+                    </div>
+
+                    <div>
+                        <label for="buyer-email-input" class="block text-xs font-extrabold uppercase tracking-wider text-slate-200 mb-1.5">
+                            <i class="fas fa-envelope text-cyberYellow mr-1"></i> Email Akun (Opsional):
+                        </label>
+                        <input type="email" id="buyer-email-input" placeholder="user@tempail.top (Opsional untuk auto-aktifkan)" 
+                            class="w-full p-3.5 bg-darkinput border-2 border-black rounded-xl text-white font-semibold placeholder-slate-500 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-400 nb-shadow-sm text-sm">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <button type="button" onclick="fetchBuyerInbox()" 
+                            class="w-full py-3.5 px-4 bg-sky-400 hover:bg-sky-300 border-2 border-black font-extrabold text-black rounded-xl text-xs nb-shadow-button flex items-center justify-center gap-1.5 uppercase cursor-pointer">
+                            <i class="fas fa-search"></i>
+                            <span>Cek Inbox Buyer</span>
+                        </button>
+                        <button type="button" onclick="clearBuyerInbox()" 
+                            class="w-full py-3.5 px-4 bg-slate-800 hover:bg-slate-700 border-2 border-black font-bold text-slate-200 rounded-xl text-xs nb-shadow-button flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i class="fas fa-trash"></i>
+                            <span>Reset Input</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Buyer Inbox Container -->
+                <div class="p-3 bg-darkinput border-2 border-black rounded-xl space-y-2">
+                    <div class="flex items-center justify-between text-xs font-extrabold text-slate-300 border-b border-slate-800 pb-2">
+                        <span><i class="fas fa-inbox text-sky-400 mr-1"></i> Kotak Masuk Buyer</span>
+                        <span id="buyer-inbox-status" class="text-[10px] text-slate-400">Siap diperiksa</span>
+                    </div>
+
+                    <div id="buyer-inbox-list" class="space-y-2 text-xs pt-1">
+                        <div class="text-center py-4 text-slate-500 text-[11px]">
+                            Masukkan Token Email di atas lalu klik <strong>Cek Inbox Buyer</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUCCESS RESULT CARD -->
+            <div id="success-view" class="hidden text-center py-2 space-y-4">
+                <div class="w-14 h-14 bg-cyberYellow border-2 border-black rounded-2xl flex items-center justify-center mx-auto text-2xl text-black nb-shadow">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-heading font-extrabold text-white">AKTIVASI SUKSES!</h3>
+                    <p class="text-xs font-semibold text-slate-400 mt-0.5">Status Premium Alight Motion Anda telah aktif.</p>
+                </div>
+
+                <div id="result-details" class="bg-darkinput border-2 border-black p-3.5 rounded-xl text-left text-xs font-semibold space-y-2">
+                    <!-- Dynamic Details from API -->
+                </div>
+
+                <button type="button" id="btn-reset" onclick="resetAllForms()"
+                    class="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs border-2 border-black nb-shadow-button cursor-pointer">
+                    Proses Akun Lain
+                </button>
+
+                <!-- BOX UCAPAN TERIMA KASIH -->
+                <div class="bg-darkinput border-2 border-black p-4 rounded-xl text-center space-y-1.5 nb-shadow-sm">
+                    <p class="text-xs font-extrabold text-cyberYellow uppercase tracking-wider">
+                        <i class="fas fa-heart text-red-500 mr-1"></i> Terima Kasih!
+                    </p>
+                    <p class="text-xs text-slate-300 font-semibold leading-relaxed">
+                        Terima kasih telah menggunakan layanan Cyronime By Akirax. Selamat berkarya!
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ACCORDION TUTORIAL BOX -->
+        <div id="tutorial-card" class="bg-darkcard border-2.5 border-black rounded-2xl overflow-hidden nb-shadow transition-all duration-300 relative">
+            <div class="absolute top-0 left-0 w-8 h-8 border-t-2.5 border-l-2.5 border-neonGreen/40 rounded-tl-2xl pointer-events-none"></div>
+            <button type="button" id="toggle-tutorial-btn" onclick="toggleTutorial()" class="w-full p-4 flex items-center justify-between text-left hover:bg-slate-800/40 transition-colors cursor-pointer">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 bg-cyberYellow border-2 border-black rounded-lg flex items-center justify-center text-black text-xs font-bold">
+                        <i class="fas fa-question text-xs"></i>
+                    </div>
+                    <span id="tutorial-title-text" class="text-xs font-extrabold uppercase tracking-wider text-white">Panduan Cara Verifikasi</span>
+                </div>
+                <i id="tutorial-arrow" class="fas fa-chevron-down text-xs text-slate-400 transition-transform duration-200"></i>
+            </button>
+
+            <div id="tutorial-content" class="px-4 pb-5 pt-3 space-y-4 text-xs font-semibold text-slate-300 border-t-2 border-black hidden">
+                <!-- DYNAMICALLY POPULATED BASED ON ACTIVE TAB -->
+            </div>
+        </div>
+
+        <!-- OWNER CONTACT / WHATSAPP SECTION -->
+        <div class="bg-darkcard border-2.5 border-black rounded-2xl p-4 nb-shadow flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-waGreen border-2 border-black rounded-xl flex items-center justify-center text-black text-xl font-bold">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Butuh Bantuan?</div>
+                    <div class="text-sm font-extrabold text-white">Hubungi Owner: <span class="text-cyberYellow">Akirax</span></div>
+                </div>
+            </div>
+
+            <a id="wa-link" href="https://wa.me/6281249578370?text=Halo%20Akirax,%20saya%20butuh%20bantuan%20Cyronime" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="w-full sm:w-auto px-4 py-2.5 bg-waGreen hover:bg-emerald-500 text-black font-extrabold rounded-xl border-2 border-black text-xs nb-shadow-button flex items-center justify-center gap-2">
+                <i class="fab fa-whatsapp text-sm"></i>
+                <span>CHAT WHATSAPP</span>
+            </a>
+        </div>
+
+        <!-- TESTIMONI (dikontrol lewat /settestimoni di Telegram bot) -->
+        <div id="site-testimoni-card" class="hidden bg-darkcard border-2 border-black rounded-2xl p-4 nb-shadow-sm relative overflow-hidden">
+            <i class="fas fa-quote-left absolute top-3 right-4 text-2xl text-cyberYellow/15"></i>
+            <p id="site-testimoni-text" class="text-xs font-semibold text-slate-300 leading-relaxed relative z-10"></p>
+        </div>
+
+        <!-- FAQ (dikontrol lewat /setfaq di Telegram bot) -->
+        <div id="site-faq-card" class="hidden bg-darkcard border-2 border-black rounded-2xl p-4 nb-shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+                <i class="fas fa-circle-question text-cyberYellow text-sm"></i>
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-300">FAQ</span>
+            </div>
+            <p id="site-faq-text" class="text-xs font-medium text-slate-400 leading-relaxed whitespace-pre-line"></p>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-6 mb-2 text-center text-xs font-bold text-slate-400 space-y-2.5 relative z-10">
+        <div class="inline-flex items-center gap-2 bg-darkcard text-slate-300 border-2 border-black px-3.5 py-1.5 rounded-xl font-bold text-[11px] nb-shadow-sm uppercase tracking-wider">
+            <span id="footer-credit-text">Copyright by <strong class="font-heading text-cyberYellow">Akirax</strong></span>
+        </div>
+
+        <!-- SOCIAL LINKS (dikontrol lewat /setsocial di Telegram bot) -->
+        <div id="site-social-links" class="hidden items-center justify-center gap-2"></div>
+
+        <p class="text-[10px] text-slate-500 font-semibold uppercase tracking-widest">
+            &copy; <span id="year"></span> Cyronime Premium Portal
+        </p>
+    </footer>
+
+    <!-- INITIAL POPUP MODAL: "AKTIVASI DENGAN?" -->
+    <!-- POPUP PENGUMUMAN (dikontrol lewat /setannouncement di Telegram bot) -->
+    <div id="site-announcement-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-[150] items-center justify-center p-4">
+        <div class="bg-darkcard border-3 border-black p-6 rounded-2xl nb-shadow-lg text-center max-w-sm w-full relative modal-enter">
+            <div class="w-12 h-12 bg-cyberYellow border-2 border-black rounded-2xl flex items-center justify-center mx-auto mb-4 nb-shadow">
+                <i class="fas fa-bullhorn text-lg text-black"></i>
+            </div>
+            <h3 class="font-heading font-extrabold text-lg text-white uppercase tracking-wider mb-2">Pengumuman</h3>
+            <p id="site-announcement-text" class="text-sm font-medium text-slate-300 leading-relaxed mb-5"></p>
+            <button type="button" onclick="closeSiteAnnouncement()" class="w-full py-3 px-4 bg-cyberYellow border-2 border-black font-extrabold text-black rounded-xl text-sm nb-shadow-button uppercase tracking-wide cursor-pointer">
+                Oke, Paham
+            </button>
+        </div>
+    </div>
+
+    <div id="initial-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div class="bg-darkcard border-3 border-black p-6 sm:p-7 rounded-2xl nb-shadow-lg text-center max-w-sm md:max-w-md w-full relative overflow-hidden modal-enter">
+            <!-- Decorative corner accents -->
+            <div class="absolute top-0 left-0 w-12 h-12 border-t-3 border-l-3 border-cyberYellow rounded-tl-2xl pointer-events-none"></div>
+            <div class="absolute bottom-0 right-0 w-12 h-12 border-b-3 border-r-3 border-neonGreen rounded-br-2xl pointer-events-none"></div>
+
+            <!-- Top icon with glow ring -->
+            <div class="relative w-fit mx-auto mb-5 stagger-1">
+                <div class="absolute inset-0 bg-cyberYellow/20 blur-xl rounded-full"></div>
+                <div class="relative w-14 h-14 bg-cyberYellow border-2 border-black rounded-2xl flex items-center justify-center text-2xl text-black nb-shadow">
+                    <i class="fas fa-bolt"></i>
+                </div>
+            </div>
+
+            <!-- Title with glitch effect -->
+            <div class="stagger-2">
+                <h3 class="font-heading font-extrabold text-xl text-white uppercase tracking-wider">Aktivasi Dengan?</h3>
+                <div class="flex items-center justify-center mt-2">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Pilih metode aktivasi</p>
+                </div>
+            </div>
+
+            <!-- Option buttons — staggered entrance, distinct styles -->
+            <div class="space-y-3 pt-5">
+                <!-- Option 1: Akun Pribadi -->
+                <button type="button" onclick="requestMode('pribadi')"
+                    class="stagger-1 group w-full py-4 px-4 bg-cyberYellow hover:bg-amber-400 border-2 border-black font-extrabold text-black rounded-xl text-xs nb-shadow-button flex items-center justify-between uppercase cursor-pointer transition-all">
+                    <span class="flex items-center gap-2.5">
+                        <span class="w-7 h-7 bg-black/15 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-user text-sm"></i>
+                        </span>
+                        <span>Akun Pribadi</span>
+                    </span>
+                    <i class="fas fa-lock text-xs opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                </button>
+
+                <!-- Option 2: Akun Generate -->
+                <button type="button" onclick="requestMode('generate')"
+                    class="stagger-2 group w-full py-4 px-4 bg-neonGreen hover:bg-emerald-400 border-2 border-black font-extrabold text-black rounded-xl text-xs nb-shadow-button flex items-center justify-between uppercase cursor-pointer transition-all">
+                    <span class="flex items-center gap-2.5">
+                        <span class="w-7 h-7 bg-black/15 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-robot text-sm"></i>
+                        </span>
+                        <span>Akun Generate</span>
+                        <span class="bg-black text-neonGreen px-1.5 py-0.5 rounded text-[9px] font-black border border-black/20">AUTO</span>
+                    </span>
+                    <i class="fas fa-lock text-xs opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                </button>
+
+                <!-- Option 3: Cek Mailbox Buyer -->
+                <button type="button" onclick="requestMode('buyer')"
+                    class="stagger-3 group w-full py-4 px-4 bg-sky-400 hover:bg-sky-300 border-2 border-black font-extrabold text-black rounded-xl text-xs nb-shadow-button flex items-center justify-between uppercase cursor-pointer transition-all">
+                    <span class="flex items-center gap-2.5">
+                        <span class="w-7 h-7 bg-black/15 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-key text-sm"></i>
+                        </span>
+                        <span>Cek Mailbox</span>
+                        <span class="bg-black/70 text-sky-200 px-1.5 py-0.5 rounded text-[9px] font-black">BUYER</span>
+                    </span>
+                    <i class="fas fa-chevron-right text-xs opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all"></i>
+                </button>
+            </div>
+
+            <!-- Footer badge -->
+            <div class="flex items-center justify-center gap-1.5 mt-5 pt-4 border-t-2 border-black/40">
+                <i class="fas fa-shield-halved text-[10px] text-neonGreen"></i>
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Powered by Alight Pro</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP MODAL: LOGIN SELLER (Khusus Pribadi & Generate) -->
+    <div id="seller-login-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[140] flex items-center justify-center p-4 hidden">
+        <!-- Added modal-enter to inner div below -->
+        <div class="bg-darkcard border-3 border-black p-5 sm:p-6 rounded-2xl nb-shadow-lg max-w-sm md:max-w-md w-full space-y-4 relative text-left">
+            <button type="button" onclick="closeSellerLoginModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white p-1.5 cursor-pointer">
+                <i class="fas fa-times text-base"></i>
+            </button>
+
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 bg-cyberYellow border-2 border-black rounded-xl flex items-center justify-center text-black font-extrabold text-sm nb-shadow-sm">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div>
+                    <h3 class="font-heading font-extrabold text-sm text-cyberYellow uppercase tracking-wider">Login Seller</h3>
+                    <p class="text-[10px] text-slate-400 font-medium">Fitur ini khusus seller terdaftar</p>
+                </div>
+            </div>
+
+            <div id="free-counter-info" class="hidden bg-darkinput border-2 border-black rounded-xl p-3 text-center">
+                <p class="text-[11px] font-bold text-slate-300 leading-relaxed">
+                    Gratis hari ini sudah habis <span class="text-cyberYellow">(10/10)</span>.<br>
+                    Masukkan token seller untuk lanjut pakai.
+                </p>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-[11px] font-bold text-slate-300">Token Seller:</label>
+                <input type="password" id="seller-token-input" placeholder="Masukkan token seller kamu"
+                    onkeydown="if(event.key==='Enter'){submitSellerLogin();}"
+                    class="w-full p-3 bg-black border-2 border-black rounded-xl text-white text-xs outline-none focus:border-cyberYellow">
+            </div>
+
+            <div id="seller-login-error" class="hidden text-[11px] text-red-400 font-bold"></div>
+
+            <button type="button" id="btn-seller-login" onclick="submitSellerLogin()"
+                class="w-full py-3 bg-cyberYellow hover:bg-amber-400 text-black font-extrabold rounded-xl text-xs border-2 border-black nb-shadow-button cursor-pointer uppercase">
+                <i class="fas fa-unlock mr-1"></i> Masuk
+            </button>
+        </div>
+    </div>
+
+    <!-- POPUP MODAL: ISI PESAN EMAIL BUYER -->
+    <div id="email-view-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[130] flex items-center justify-center p-4 hidden">
+        <div class="bg-darkcard border-3 border-black p-5 sm:p-6 rounded-2xl nb-shadow-lg max-w-sm md:max-w-md w-full space-y-4 relative text-left">
+            <button type="button" onclick="closeEmailViewModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white p-1.5 cursor-pointer">
+                <i class="fas fa-times text-base"></i>
+            </button>
+
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 bg-sky-400 border-2 border-black rounded-xl flex items-center justify-center text-black font-extrabold text-sm nb-shadow-sm">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <div>
+                    <h3 class="font-heading font-extrabold text-sm text-sky-400 uppercase tracking-wider">Isi Pesan Email</h3>
+                    <p class="text-[10px] text-slate-400 font-medium">Periksa pesan sebelum mengekstrak link verifikasi</p>
+                </div>
+            </div>
+
+            <div class="space-y-1.5 text-xs">
+                <div class="flex justify-between border-b border-slate-800 pb-1.5">
+                    <span class="text-slate-400 font-bold">Dari:</span>
+                    <span id="email-view-from" class="text-white font-semibold truncate max-w-[70%] text-right">-</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800 pb-1.5">
+                    <span class="text-slate-400 font-bold">Subjek:</span>
+                    <span id="email-view-subject" class="text-sky-300 font-semibold truncate max-w-[70%] text-right">-</span>
+                </div>
+            </div>
+
+            <textarea id="email-view-body" readonly rows="7"
+                class="w-full p-3 bg-black border-2 border-black rounded-xl text-slate-200 font-mono text-[11px] outline-none resize-none leading-relaxed select-all"></textarea>
+
+            <div id="email-view-url-note" onclick="openAlightLink()" class="hidden w-full py-3 bg-transparent text-center text-xs text-neonGreen font-extrabold cursor-pointer hover:underline uppercase items-center justify-center gap-1.5">
+                <i class="fas fa-link mr-1"></i> Click to open Alightmotion
+            </div>
+            <div id="email-view-no-url-note" class="hidden text-[10px] text-red-400 font-bold">
+                <i class="fas fa-exclamation-triangle mr-1"></i> Tidak ada link verifikasi ditemukan dalam pesan ini.
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP MODAL: KIRIM KE BUYER KAMU -->
+    <div id="buyer-modal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[120] flex items-center justify-center p-4 hidden">
+        <div class="bg-darkcard border-3 border-black p-5 sm:p-6 rounded-2xl nb-shadow-lg max-w-sm md:max-w-md w-full space-y-4 relative text-left">
+            <button type="button" onclick="closeBuyerModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white p-1.5 cursor-pointer">
+                <i class="fas fa-times text-base"></i>
+            </button>
+
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 bg-cyberYellow border-2 border-black rounded-xl flex items-center justify-center text-black font-extrabold text-sm nb-shadow-sm">
+                    <i class="fas fa-paper-plane"></i>
+                </div>
+                <div>
+                    <h3 class="font-heading font-extrabold text-sm text-cyberYellow uppercase tracking-wider">Kirim ke Buyer Kamu</h3>
+                    <p class="text-[10px] text-slate-400 font-medium">Format pesan siap dikirim langsung ke pembeli</p>
+                </div>
+            </div>
+            
+            <textarea id="buyer-format-text" readonly rows="9" 
+                class="w-full p-3 bg-black border-2 border-black rounded-xl text-slate-200 font-mono text-[11px] outline-none resize-none leading-relaxed select-all"></textarea>
+
+            <button type="button" onclick="copyBuyerMessage()" 
+                class="w-full py-3.5 px-4 bg-cyberYellow hover:bg-amber-400 border-2 border-black font-extrabold text-black text-xs rounded-xl nb-shadow-button flex items-center justify-center gap-2 uppercase cursor-pointer">
+                <i class="fas fa-copy"></i>
+                <span>Salin Pesan Buyer</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- LOADING SCREEN OVERLAY -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden">
+        <div class="bg-darkcard border-3 border-black p-6 rounded-2xl nb-shadow-lg text-center max-w-xs w-full space-y-3">
+            <div class="nb-spinner mx-auto"></div>
+            <h4 id="loading-msg" class="font-heading font-extrabold text-sm text-white uppercase tracking-wider">Memproses Data...</h4>
+            <p class="text-xs font-medium text-slate-400">Mohon tunggu sebentar...</p>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT & SCRAPER SCRIPTS -->
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Semua endpoint di bawah ini mengarah ke backend sendiri (/api/...),
+        // bukan ke domain pihak ketiga secara langsung. Endpoint upstream & header
+        // spoofing disembunyikan di serverless function (folder /api) sehingga
+        // tidak terlihat saat file ini di-inspect / view-source / di-scrape.
+
+        // ==================== OBJECT TEMPAIL SCRAPER (via backend) ====================
+        const tempailScraper = {
+            createEmail: async () => {
+                try {
+                    const res = await axios.get('/api/tempail?action=create');
+                    return res.data;
+                } catch (e) {
+                    return { success: false, error: e.response?.data?.error || e.message };
+                }
+            },
+
+            getMessages: async (emailToken) => {
+                try {
+                    const res = await axios.get(`/api/tempail?action=messages&token=${encodeURIComponent(emailToken)}`);
+                    return res.data;
+                } catch (e) {
+                    return { success: false, error: e.response?.data?.error || e.message };
+                }
+            },
+
+            getMessage: async (messageId) => {
+                try {
+                    const res = await axios.get(`/api/tempail?action=message&id=${encodeURIComponent(messageId)}`);
+                    return res.data;
+                } catch (e) {
+                    return { success: false, error: e.response?.data?.error || e.message };
+                }
+            }
+        };
+
+        // ==================== OBJECT TEMPMAIL.LOL / TEMBOX (via backend) ====================
+        const tempboxScraper = {
+            createEmail: async () => {
+                try {
+                    const res = await axios.get('/api/tempbox?action=create');
+                    return res.data;
+                } catch (e) {
+                    return { success: false, error: e.response?.data?.error || e.message };
+                }
+            },
+
+            getMessages: async (token) => {
+                try {
+                    const res = await axios.get(`/api/tempbox?action=messages&token=${encodeURIComponent(token)}`);
+                    return res.data;
+                } catch (e) {
+                    return { success: false, error: e.response?.data?.error || e.message };
+                }
+            }
+        };
+
+        // DOM Elements
+        const initialModal = document.getElementById('initial-modal');
+        const buyerModal = document.getElementById('buyer-modal');
+        const tabPribadi = document.getElementById('tab-pribadi');
+        const tabGenerate = document.getElementById('tab-generate');
+        const tabBuyer = document.getElementById('tab-buyer');
+        const sectionPribadi = document.getElementById('section-pribadi');
+        const sectionGenerate = document.getElementById('section-generate');
+        const sectionBuyer = document.getElementById('section-buyer');
+
+        const formEmail = document.getElementById('form-email');
+        const formVerify = document.getElementById('form-verify');
+        const successView = document.getElementById('success-view');
+
+        const inputEmail = document.getElementById('email');
+        const inputVerifyLink = document.getElementById('verify-link');
+        const displayEmail = document.getElementById('display-email');
+        const resultDetails = document.getElementById('result-details');
+
+        const step1Badge = document.getElementById('step-1-badge');
+        const step2Badge = document.getElementById('step-2-badge');
+
+        const alertBox = document.getElementById('alert-box');
+        const alertMsg = document.getElementById('alert-msg');
+        const alertIcon = document.getElementById('alert-icon');
+
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingMsg = document.getElementById('loading-msg');
+
+        const btnSubmitEmail = document.getElementById('btn-submit-email');
+        const btnIconEmail = document.getElementById('btn-icon-email');
+
+        const genEmailBox = document.getElementById('gen-email-box');
+        const genEmailInput = document.getElementById('gen-email-input');
+        const iconRefreshInbox = document.getElementById('icon-refresh-inbox');
+        const inboxList = document.getElementById('inbox-list');
+        const inboxStatus = document.getElementById('inbox-status');
+        const genVerifyLink = document.getElementById('gen-verify-link');
+        const autoLinkBadge = document.getElementById('auto-link-badge');
+
+        // Buyer Mailbox Elements
+        const buyerTokenInput = document.getElementById('buyer-token-input');
+        const buyerEmailInput = document.getElementById('buyer-email-input');
+        const buyerInboxList = document.getElementById('buyer-inbox-list');
+        const buyerInboxStatus = document.getElementById('buyer-inbox-status');
+
+        let activeMode = "pribadi";
+        let currentServer = "tempail";
+        let savedEmail = "";
+        let savedToken = "";
+        let hasViewedTutorial = false;
+        let isTimerRunning = false;
+        let autoPollInterval = null;
+        let autoPollSeconds = 0;
+        let seenMessageIds = new Set();
+
+        // --- MODAL SELECTION ---
+        function selectInitialMode(mode) {
+            if (initialModal) {
+                initialModal.classList.add('hidden');
+            }
+            switchMode(mode);
+        }
+
+        // --- SELLER LOGIN GATE (khusus mode 'pribadi' & 'generate') ---
+        let sellerUnlocked = sessionStorage.getItem('sellerUnlocked') === '1';
+        let freeUnlocked = sessionStorage.getItem('freeUnlocked') === '1';
+        let pendingMode = null;
+
+        function requestMode(mode) {
+            const needsAuth = (mode === 'pribadi' || mode === 'generate');
+
+            // Kalau gak perlu auth, atau sudah unlocked (token atau gratis), langsung masuk
+            if (!needsAuth || sellerUnlocked || freeUnlocked) {
+                selectInitialMode(mode);
+                return;
+            }
+
+            // Belum unlocked — cek freemium dulu (10 gratis per IP per hari)
+            checkFreemium(mode);
+        }
+
+        async function checkFreemium(mode) {
+            pendingMode = mode;
+
+            // Tampilkan loading singkat
+            const btn = document.querySelector('#initial-modal button[onclick*="pribadi"]') ||
+                        document.querySelector('#initial-modal button[onclick*="generate"]');
+            const overlay = document.getElementById('initial-modal');
+
+            try {
+                const res = await axios.get('/api/freemium');
+                const data = res.data || {};
+
+                if (data.free) {
+                    // Masih ada request gratis — masuk langsung
+                    freeUnlocked = true;
+                    sessionStorage.setItem('freeUnlocked', '1');
+                    selectInitialMode(mode);
+                    pendingMode = null;
+                } else {
+                    // Gratis habis — tampilkan modal login seller
+                    showSellerLoginModal();
+                }
+            } catch (e) {
+                // Kalau backend error, fallback ke login seller
+                showSellerLoginModal();
+            }
+        }
+
+        function showSellerLoginModal() {
+            const errBox = document.getElementById('seller-login-error');
+            const input = document.getElementById('seller-token-input');
+            if (errBox) errBox.classList.add('hidden');
+            if (input) input.value = '';
+
+            // Tampilkan info "gratis habis" (kalau ada)
+            const freeInfo = document.getElementById('free-counter-info');
+            if (freeInfo) freeInfo.classList.remove('hidden');
+
+            document.getElementById('seller-login-modal').classList.remove('hidden');
+        }
+
+        function closeSellerLoginModal() {
+            document.getElementById('seller-login-modal').classList.add('hidden');
+            pendingMode = null;
+        }
+
+        async function submitSellerLogin() {
+            const input = document.getElementById('seller-token-input');
+            const errBox = document.getElementById('seller-login-error');
+            const btn = document.getElementById('btn-seller-login');
+            const token = (input?.value || '').trim();
+
+            if (!token) {
+                errBox.textContent = 'Masukkan token seller terlebih dahulu.';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Memverifikasi...';
+
+            try {
+                const res = await axios.get(`/api/auth?token=${encodeURIComponent(token)}`);
+                if (res.data && res.data.success) {
+                    sellerUnlocked = true;
+                    sessionStorage.setItem('sellerUnlocked', '1');
+                    closeSellerLoginModal();
+                    if (pendingMode) selectInitialMode(pendingMode);
+                    pendingMode = null;
+                } else {
+                    errBox.textContent = (res.data && res.data.error) || 'Token salah atau tidak terdaftar.';
+                    errBox.classList.remove('hidden');
+                }
+            } catch (e) {
+                errBox.textContent = 'Gagal memverifikasi token. Coba lagi.';
+                errBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-unlock mr-1"></i> Masuk';
+            }
+        }
+
+        // --- DYNAMIC TUTORIAL CONTENT PER MODE ---
+        function updateTutorialContent(mode) {
+            const titleEl = document.getElementById('tutorial-title-text');
+            const contentEl = document.getElementById('tutorial-content');
+
+            if (!titleEl || !contentEl) return;
+
+            if (mode === 'pribadi') {
+                titleEl.textContent = "Panduan Mode Pribadi";
+                contentEl.innerHTML = `
+                    <div class="space-y-2 text-[11px]">
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-neonGreen font-bold flex-shrink-0 flex items-center justify-center text-[9px]">1</span>
+                            <p>Masukkan alamat email terdaftar Alight Motion Anda (yang belum Premium).</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-neonGreen font-bold flex-shrink-0 flex items-center justify-center text-[9px]">2</span>
+                            <p>Buka aplikasi Gmail/Email Anda, klik menu garis tiga di pojok kiri atas, lalu buka folder <strong>Spam</strong>.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-neonGreen font-bold flex-shrink-0 flex items-center justify-center text-[9px]">3</span>
+                            <p>Buka email <i>no-reply</i> Alight Motion, cari tombol <strong>"Log in to Alight Motion"</strong>, <strong>tekan & tahan lama</strong> lalu pilih <strong>Salin URL/Link</strong> (<span class="text-red-400 font-bold">jangan diklik langsung</span>).</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-neonGreen font-bold flex-shrink-0 flex items-center justify-center text-[9px]">4</span>
+                            <p>Tempelkan URL verifikasi ke kolom di web ini, klik <strong>Aktifkan Premium</strong>, lalu <i>re-login</i> di aplikasi Alight Motion Anda.</p>
+                        </div>
+                    </div>
+                `;
+            } else if (mode === 'generate') {
+                titleEl.textContent = "Panduan Seller (Mode Generate)";
+                contentEl.innerHTML = `
+                    <div class="space-y-2 text-[11px]">
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-cyberYellow font-bold flex-shrink-0 flex items-center justify-center text-[9px]">1</span>
+                            <p>Klik tombol <strong>"Generate & Auto-Aktifkan"</strong> untuk membuat Email & Token Mailbox baru.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-cyberYellow font-bold flex-shrink-0 flex items-center justify-center text-[9px]">2</span>
+                            <p>Gunakan popup <strong>"Kirim ke Buyer Kamu"</strong> untuk menyalin format pesan yang siap dikirim ke pembeli.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-cyberYellow font-bold flex-shrink-0 flex items-center justify-center text-[9px]">3</span>
+                            <p>Sistem akan otomatis mengekstrak link verifikasi dan mengaktifkan akun secara instan.</p>
+                        </div>
+                    </div>
+                `;
+            } else if (mode === 'buyer') {
+                titleEl.textContent = "Panduan Buyer (Penerima Token)";
+                contentEl.innerHTML = `
+                    <div class="space-y-2 text-[11px]">
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-sky-400 font-bold flex-shrink-0 flex items-center justify-center text-[9px]">1</span>
+                            <p>Kamu akan diberi <strong>Token Email</strong> dan <strong>Email Akun</strong> oleh seller.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-sky-400 font-bold flex-shrink-0 flex items-center justify-center text-[9px]">2</span>
+                            <p>Buka aplikasi <strong>Alight Motion</strong>, lalu *login* menggunakan Email Akun dari seller sampai muncul instruksi periksa email.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-sky-400 font-bold flex-shrink-0 flex items-center justify-center text-[9px]">3</span>
+                            <p>Masukkan Token Email & Email Akun ke kotak di menu <strong>BUYER MAIL</strong> ini, lalu klik <strong>Cek Inbox Buyer</strong>.</p>
+                        </div>
+                        <div class="flex items-start gap-2">
+                            <span class="w-4 h-4 rounded bg-black border border-slate-700 text-sky-400 font-bold flex-shrink-0 flex items-center justify-center text-[9px]">4</span>
+                            <p>Klik <strong>Baca & Ekstrak</strong> pada pesan Alight Motion yang masuk, lalu kamu akan otomatis masuk ke AM dengan keadaan Premium!</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // --- TAB SWITCHER LOGIC ---
+        function switchMode(mode) {
+            activeMode = mode;
+            hideAlert();
+            stopAutoPoll();
+            updateTutorialContent(mode);
+
+            tabPribadi.className = "py-2.5 px-1 rounded-xl font-extrabold text-[11px] border-2 border-black transition-all bg-darkbg text-slate-400 cursor-pointer truncate";
+            tabGenerate.className = "py-2.5 px-1 rounded-xl font-extrabold text-[11px] border-2 border-black transition-all bg-darkbg text-slate-400 cursor-pointer truncate";
+            tabBuyer.className = "py-2.5 px-1 rounded-xl font-extrabold text-[11px] border-2 border-black transition-all bg-darkbg text-slate-400 cursor-pointer truncate";
+
+            sectionPribadi.classList.add('hidden');
+            sectionGenerate.classList.add('hidden');
+            sectionBuyer.classList.add('hidden');
+
+            if (mode === 'pribadi') {
+                tabPribadi.className = "py-2.5 px-1 rounded-xl font-extrabold text-[11px] border-2 border-black transition-all bg-cyberYellow text-black nb-shadow-sm cursor-pointer truncate";
+                sectionPribadi.classList.remove('hidden');
+            } else if (mode === 'generate') {
+                tabGenerate.className = "py-2.5 px-1 rounded-xl font-extrabold text-[11px] border-2 border-black transition-all bg-neonGreen text-black nb-shadow-sm cursor-pointer truncate";
+                sectionGenerate.classList.remove('hidden');
+            } else if (mode === 'buyer') {
+                tabBuyer.className = "py-2.5 px-1 rounded-xl font-extrabold text-[11px] border-2 border-black transition-all bg-sky-400 text-black nb-shadow-sm cursor-pointer truncate";
+                sectionBuyer.classList.remove('hidden');
+            }
+        }
+
+        // --- BUYER MODAL HANDLERS ---
+        // --- POPUP: ISI PESAN EMAIL (BACA & EKSTRAK) ---
+        let pendingVerify = { email: '', url: '' };
+        let seenBuyerMsgKeys = new Set();
+
+        function getBuyerMsgKey(msg) {
+            return msg.id || msg.date || `${msg.from || ''}|${msg.subject || ''}|${(msg.body || '').slice(0, 40)}`;
+        }
+
+        function openEmailViewModal({ from, subject, body, targetUrl }) {
+            document.getElementById('email-view-from').textContent = from || 'Tidak diketahui';
+            document.getElementById('email-view-subject').textContent = subject || '(Tanpa subjek)';
+            document.getElementById('email-view-body').value = body || '(Isi pesan kosong)';
+
+            const urlNote = document.getElementById('email-view-url-note');
+            const noUrlNote = document.getElementById('email-view-no-url-note');
+
+            if (targetUrl) {
+                urlNote.classList.remove('hidden');
+                urlNote.classList.add('flex');
+                noUrlNote.classList.add('hidden');
+            } else {
+                urlNote.classList.add('hidden');
+                urlNote.classList.remove('flex');
+                noUrlNote.classList.remove('hidden');
+            }
+
+            pendingVerify = { email: (buyerEmailInput.value || '').trim(), url: targetUrl || '' };
+
+            const modal = document.getElementById('email-view-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeEmailViewModal() {
+            const modal = document.getElementById('email-view-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function openAlightLink() {
+            if (!pendingVerify.url) {
+                showAlert('URL verifikasi tidak ditemukan dalam pesan.', false, true);
+                return;
+            }
+            window.location.href = pendingVerify.url;
+        }
+
+        function openBuyerModal() {
+            if (buyerModal) buyerModal.classList.remove('hidden');
+        }
+
+        function closeBuyerModal() {
+            if (buyerModal) buyerModal.classList.add('hidden');
+        }
+
+        function copyBuyerMessage() {
+            const txt = document.getElementById('buyer-format-text');
+            if (txt && txt.value) {
+                navigator.clipboard.writeText(txt.value);
+                showAlert('Format Pesan Buyer berhasil disalin! Popup ditutup.', true, false);
+                closeBuyerModal();
+            }
+        }
+
+        // --- SERVER ENGINE SWITCHER ---
+        function setServerEngine(server) {
+            currentServer = server;
+            const btnTempail = document.getElementById('srv-tempail');
+            const btnTempbox = document.getElementById('srv-tempbox');
+
+            if (server === 'tempail') {
+                btnTempail.className = "py-1.5 px-2 rounded-lg text-xs font-bold border border-black bg-cyberYellow text-black cursor-pointer";
+                btnTempbox.className = "py-1.5 px-2 rounded-lg text-xs font-bold text-slate-400 cursor-pointer";
+            } else {
+                btnTempbox.className = "py-1.5 px-2 rounded-lg text-xs font-bold border border-black bg-cyberYellow text-black cursor-pointer";
+                btnTempail.className = "py-1.5 px-2 rounded-lg text-xs font-bold text-slate-400 cursor-pointer";
+            }
+        }
+
+        // --- ACCORDION TUTORIAL ---
+        function toggleTutorial(forceOpen = false) {
+            const tutorialContent = document.getElementById('tutorial-content');
+            const tutorialArrow = document.getElementById('tutorial-arrow');
+            if (!tutorialContent || !tutorialArrow) return;
+            const isHidden = tutorialContent.classList.contains('hidden');
+            if (isHidden || forceOpen) {
+                tutorialContent.classList.remove('hidden');
+                tutorialArrow.classList.add('rotate-180');
+            } else {
+                tutorialContent.classList.add('hidden');
+                tutorialArrow.classList.remove('rotate-180');
+            }
+        }
+
+        // --- AUTO POLLING LOGIC ---
+        function startAutoPollAndActivate() {
+            stopAutoPoll();
+            autoPollSeconds = 0;
+            seenMessageIds.clear();
+            const statusIcon = document.getElementById('auto-status-icon');
+            const statusText = document.getElementById('auto-status-text');
+            const timerBadge = document.getElementById('auto-timer-badge');
+
+            if (statusIcon) statusIcon.className = 'fas fa-spinner animate-spin';
+            if (statusText) statusText.textContent = 'Auto-checking inbox...';
+
+            autoPollInterval = setInterval(() => {
+                autoPollSeconds += 3;
+                if (timerBadge) timerBadge.textContent = `${autoPollSeconds}s`;
+
+                fetchInboxScraper(true);
+
+                if (autoPollSeconds >= 180) {
+                    stopAutoPoll();
+                    if (statusText) statusText.textContent = 'Auto-check paused. Silakan klik Cek Manual.';
+                }
+            }, 3000);
+        }
+
+        function stopAutoPoll() {
+            if (autoPollInterval) {
+                clearInterval(autoPollInterval);
+                autoPollInterval = null;
+            }
+            const statusIcon = document.getElementById('auto-status-icon');
+            if (statusIcon) statusIcon.className = 'fas fa-pause-circle';
+        }
+
+        // --- HTML ENTITY DECODER (untuk extract URL dari email HTML) ---
+        function decodeHtmlEntities(str) {
+            if (!str) return '';
+            var txt = document.createElement('textarea');
+            txt.innerHTML = str;
+            return txt.value;
+        }
+
+        // --- ENHANCED URL EXTRACTOR (handle HTML entities, href attrs, encoded URLs) ---
+        function extractVerificationUrl(text) {
+            if (!text) return null;
+
+            // Decode HTML entities first (e.g. &amp; -> &)
+            var decoded = decodeHtmlEntities(text);
+
+            // Try href attributes first (most reliable for HTML emails)
+            var hrefMatches = decoded.match(/href=["']?(https?:\/\/[^"'\s<>]+)["']?/gi);
+            if (hrefMatches) {
+                for (var i = 0; i < hrefMatches.length; i++) {
+                    var url = hrefMatches[i].replace(/href=["']?/i, '').replace(/["']$/, '');
+                    if (url.includes('alight') || url.includes('verify') || url.includes('login')) {
+                        return url;
+                    }
+                }
+                return hrefMatches[0].replace(/href=["']?/i, '').replace(/["']$/, '');
+            }
+
+            // Fallback: plain URL regex
+            var urlMatch = decoded.match(/https:\/\/[^\s"'<>]+/gi);
+            if (urlMatch && urlMatch.length > 0) {
+                return urlMatch.find(function(u) { return u.includes('alight') || u.includes('verify') || u.includes('login'); }) || urlMatch[0];
+            }
+
+            return null;
+        }
+
+        // --- LOADING & ALERT HELPERS ---
+        function showLoading(msg) {
+            loadingMsg.textContent = msg || "Memproses Data...";
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.add('hidden');
+        }
+
+        function showAlert(msg, isSuccess = false, isWarning = false) {
+            alertBox.classList.remove('hidden', 'bg-red-500', 'bg-cyberYellow', 'bg-neonGreen', 'text-black', 'text-white');
+            
+            if (isSuccess) {
+                alertBox.classList.add('bg-neonGreen', 'text-black');
+                alertIcon.className = 'fas fa-check-circle text-base text-black';
+            } else if (isWarning) {
+                alertBox.classList.add('bg-cyberYellow', 'text-black');
+                alertIcon.className = 'fas fa-exclamation-triangle text-base text-black';
+            } else {
+                alertBox.classList.add('bg-red-500', 'text-white');
+                alertIcon.className = 'fas fa-times-circle text-base text-white';
+            }
+            alertMsg.textContent = msg;
+        }
+
+        function hideAlert() {
+            alertBox.classList.add('hidden');
+        }
+
+        function setStep(step) {
+            hideAlert();
+            if (step === 1) {
+                formEmail.classList.remove('hidden');
+                formVerify.classList.add('hidden');
+                successView.classList.add('hidden');
+
+                step1Badge.className = "flex items-center gap-2 bg-cyberYellow text-black border-2 border-black px-3 py-1.5 rounded-xl text-xs font-bold nb-shadow-sm";
+                step2Badge.className = "flex items-center gap-2 bg-darkbg text-slate-400 border-2 border-black px-3 py-1.5 rounded-xl text-xs font-bold";
+            } else if (step === 2) {
+                formEmail.classList.add('hidden');
+                formVerify.classList.remove('hidden');
+                successView.classList.add('hidden');
+
+                step1Badge.className = "flex items-center gap-2 bg-darkbg text-slate-400 border-2 border-black px-3 py-1.5 rounded-xl text-xs font-bold";
+                step2Badge.className = "flex items-center gap-2 bg-cyberYellow text-black border-2 border-black px-3 py-1.5 rounded-xl text-xs font-bold nb-shadow-sm";
+            }
+        }
+
+        function copyText(elementId, label) {
+            const el = document.getElementById(elementId);
+            if (el && el.value) {
+                navigator.clipboard.writeText(el.value);
+                showAlert(`${label} berhasil disalin!`, true, false);
+            }
+        }
+
+        // ==================== MODE 1: AKUN PRIBADI LOGIC ====================
+        function handleFormEmailSubmit(e) {
+            e.preventDefault();
+            console.log('[FIX v2] handleFormEmailSubmit called — tutorial gate:', hasViewedTutorial, 'timer:', isTimerRunning);
+
+            if (isTimerRunning) return;
+
+            const emailVal = inputEmail.value.trim();
+
+            if (!emailVal || !emailVal.includes('@')) {
+                showAlert('Masukkan email yang valid.', false, false);
+                return;
+            }
+
+            if (!hasViewedTutorial) {
+                hasViewedTutorial = true;
+                isTimerRunning = true;
+
+                toggleTutorial(true);
+                document.getElementById('tutorial-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                btnSubmitEmail.classList.add('opacity-80', 'bg-slate-700', 'text-slate-300');
+                btnSubmitEmail.classList.remove('bg-neonGreen', 'hover:bg-emerald-400', 'text-black');
+
+                let count = 3;
+                const btnSpan = btnSubmitEmail.querySelector('span');
+                
+                showAlert(`Cek panduan di bawah dulu. Siap dalam ${count}s...`, false, true);
+                btnSpan.textContent = `BACA PANDUAN (${count}S)...`;
+                btnIconEmail.className = 'fas fa-clock animate-spin';
+
+                const timer = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        showAlert(`Cek panduan di bawah dulu. Siap dalam ${count}s...`, false, true);
+                        btnSpan.textContent = `BACA PANDUAN (${count}S)...`;
+                    } else {
+                        clearInterval(timer);
+                        isTimerRunning = false;
+
+                        btnSubmitEmail.classList.remove('opacity-80', 'bg-slate-700', 'text-slate-300');
+                        btnSubmitEmail.classList.add('bg-neonGreen', 'hover:bg-emerald-400', 'text-black');
+
+                        btnSpan.textContent = 'MEMPROSES...';
+                        btnIconEmail.className = 'fas fa-spinner animate-spin';
+
+                        showAlert('Panduan sudah dibaca, memproses email...', true, false);
+
+                        // AUTO-PROCEED: langsung panggil API tanpa perlu klik lagi
+                        savedEmail = emailVal;
+                        showLoading("Mengirim email verifikasi...");
+
+                        axios.get('/api/premium?action=check&email=' + encodeURIComponent(emailVal))
+                            .then(function(res) {
+                                hideLoading();
+                                var data = res.data;
+                                btnSpan.textContent = 'Minta Kode Verifikasi';
+                                btnIconEmail.className = 'fas fa-paper-plane';
+                                if (data.status || data.success) {
+                                    displayEmail.textContent = emailVal;
+                                    setStep(2);
+                                    showAlert(data.message || 'Permintaan diproses. Masukkan URL verifikasi.', true, false);
+                                } else {
+                                    showAlert(data.message || 'Gagal memproses email.', false, false);
+                                }
+                            })
+                            .catch(function(err) {
+                                hideLoading();
+                                btnSpan.textContent = 'Minta Kode Verifikasi';
+                                btnIconEmail.className = 'fas fa-paper-plane';
+                                showAlert('Koneksi gagal. Cek jaringan internet kamu.', false, false);
+                            });
+                    }
+                }, 1000);
+
+                return;
+            }
+
+            savedEmail = emailVal;
+            showLoading("Mengirim email verifikasi...");
+
+            axios.get(`/api/premium?action=check&email=${encodeURIComponent(emailVal)}`)
+                .then(res => {
+                    hideLoading();
+                    const data = res.data;
+                    if (data.status || data.success) {
+                        displayEmail.textContent = emailVal;
+                        setStep(2);
+                        showAlert(data.message || 'Permintaan diproses. Masukkan URL verifikasi.', true, false);
+                    } else {
+                        showAlert(data.message || 'Gagal memproses email.', false, false);
+                    }
+                })
+                .catch(err => {
+                    hideLoading();
+                    showAlert('Koneksi gagal. Cek jaringan internet kamu.', false, false);
+                });
+        }
+
+        function handleFormVerifySubmit(e) {
+            e.preventDefault();
+            const linkVal = inputVerifyLink.value.trim();
+            executeVerification(savedEmail, linkVal);
+        }
+
+        // ==================== MODE 2: AKUN GENERATE SCRAPER ====================
+        async function handleGenerateEmailScraper() {
+            stopAutoPoll();
+            showLoading("Membuat email temp baru...");
+
+            let res;
+            let usedFallback = false;
+            if (currentServer === 'tempail') {
+                res = await tempailScraper.createEmail();
+                if (!res.success) {
+                    // Server utama gagal -> otomatis coba server cadangan.
+                    showLoading("Server utama sibuk, mencoba server cadangan...");
+                    const fallbackRes = await tempboxScraper.createEmail();
+                    if (fallbackRes.success) {
+                        res = fallbackRes;
+                        usedFallback = true;
+                        setServerEngine('tempbox');
+                    }
+                }
+            } else {
+                res = await tempboxScraper.createEmail();
+                if (!res.success) {
+                    showLoading("Server utama sibuk, mencoba server cadangan...");
+                    const fallbackRes = await tempailScraper.createEmail();
+                    if (fallbackRes.success) {
+                        res = fallbackRes;
+                        usedFallback = true;
+                        setServerEngine('tempail');
+                    }
+                }
+            }
+
+            if (res.success) {
+                if (usedFallback) {
+                    showAlert('Server utama sedang gangguan, otomatis dialihkan ke server cadangan.', true, false);
+                }
+                savedEmail = res.email;
+                savedToken = res.emailToken;
+
+                genEmailInput.value = savedEmail;
+                document.getElementById('gen-email-box').classList.remove('hidden');
+
+                // POPULATE FORMAT BUYER MESSAGE & BUKA POPUP
+                const currentWebUrl = window.location.origin + window.location.pathname;
+                const buyerMsgFormat = 
+`📌 DATA AKUN CYRONIME PREMIUM
+
+📧 Email Akun : ${savedEmail}
+🔐 Token Mail : ${savedToken}
+🌐 Web Aktivasi: ${currentWebUrl}
+
+📋 PANDUAN UNTUK BUYER:
+1. Login akun di AM sampai muncul instruksi cek email.
+2. Buka web aktivasi di atas, lalu masuk ke menu BUYER MAIL.
+3. Masukkan Token Mail & Email Akun, lalu klik "Cek Inbox Buyer".
+4. Tekan "Baca & Ekstrak", dan kamu otomatis masuk ke AM dengan keadaan Premium!`;
+
+                document.getElementById('buyer-format-text').value = buyerMsgFormat;
+                openBuyerModal();
+
+                showLoading("Mengirim permintaan ke Alight Motion...");
+                try {
+                    const apiRes = await axios.get(`/api/premium?action=check&email=${encodeURIComponent(savedEmail)}`);
+                    hideLoading();
+                    if (apiRes.data.status || apiRes.data.success) {
+                        showAlert(`Email (${savedEmail}) aktif! Auto-checking inbox diaktifkan...`, true, false);
+                        startAutoPollAndActivate();
+                    } else {
+                        showAlert(`Email terbuat tapi API pesan: ${apiRes.data.message}`, false, true);
+                    }
+                } catch (e) {
+                    hideLoading();
+                    showAlert("Email terbuat! Memulai auto-check inbox...", true, false);
+                    startAutoPollAndActivate();
+                }
+            } else {
+                hideLoading();
+                showAlert(`Gagal buat email: ${res.error}`, false, false);
+            }
+        }
+
+        async function fetchInboxScraper(isAuto = false) {
+            console.log('[FIX v2] fetchInboxScraper called — auto:', isAuto, 'server:', currentServer, 'token:', savedToken ? 'YES' : 'NO');
+            if (!savedToken) {
+                if (!isAuto) showAlert('Generate email terlebih dahulu!', false, false);
+                return;
+            }
+
+            iconRefreshInbox.classList.add('animate-spin');
+            if (!isAuto) inboxStatus.textContent = "Memeriksa kotak masuk...";
+
+            let res;
+            if (currentServer === 'tempail') {
+                res = await tempailScraper.getMessages(savedToken);
+            } else {
+                res = await tempboxScraper.getMessages(savedToken);
+            }
+
+            iconRefreshInbox.classList.remove('animate-spin');
+
+            if (res.success && res.messages && res.messages.length > 0) {
+                inboxStatus.textContent = `${res.messages.length} email ditemukan!`;
+                inboxList.innerHTML = "";
+
+                for (const msg of res.messages) {
+                    const msgItem = document.createElement('div');
+                    msgItem.className = "p-3 bg-slate-900 border border-slate-700 rounded-xl cursor-pointer hover:border-neonGreen transition-all space-y-1";
+                    
+                    if (currentServer === 'tempail') {
+                        msgItem.innerHTML = `
+                            <div class="flex justify-between font-bold text-white">
+                                <span class="truncate"><i class="fas fa-envelope text-cyberYellow mr-1"></i> ${msg.from}</span>
+                            </div>
+                            <div class="text-[11px] text-neonGreen font-semibold">${msg.subject || '(Email Verifikasi Alight Motion)'}</div>
+                            <div class="text-[10px] text-slate-400 flex items-center justify-between pt-1">
+                                <span>Mengekstrak URL verifikasi...</span>
+                                <span class="text-neonGreen font-bold"><i class="fas fa-bolt"></i> Process</span>
+                            </div>
+                        `;
+                        msgItem.onclick = () => readMessageDetailScraper(msg.id);
+
+                        if (isAuto) {
+                            if (!seenMessageIds.has(msg.id)) {
+                                seenMessageIds.add(msg.id);
+                                readMessageDetailScraper(msg.id);
+                            }
+                        }
+                    } else {
+                        var msgKey = msg.subject + '|' + (msg.from || '');
+                        msgItem.innerHTML = `
+                            <div class="flex justify-between font-bold text-white">
+                                <span>${msg.from}</span>
+                            </div>
+                            <div class="text-[11px] text-neonGreen font-semibold">${msg.subject || 'Alight Motion'}</div>
+                            <div class="text-[10px] text-slate-300 font-mono break-all line-clamp-2">${msg.body || ''}</div>
+                        `;
+                        
+                        if (isAuto && seenMessageIds.has(msgKey)) {
+                            // Skip already-processed tempbox messages
+                        } else if (isAuto) {
+                            seenMessageIds.add(msgKey);
+                        }
+                        var targetUrl = extractVerificationUrl(msg.html || msg.body);
+                        if (targetUrl) {
+                            stopAutoPoll();
+                            genVerifyLink.value = targetUrl;
+                            autoLinkBadge.classList.remove('hidden');
+                            showAlert('⚡ URL Verifikasi otomatis ditemukan! Mengaktifkan premium...', true, false);
+                            executeVerification(savedEmail, targetUrl);
+                        } else {
+                            console.log('[Auto-Verify] Email masuk (Tempbox) tapi tidak ada URL ditemukan di body.');
+                        }
+                    }
+
+                    inboxList.appendChild(msgItem);
+                }
+            } else {
+                if (!isAuto) inboxStatus.textContent = "Belum ada pesan baru.";
+            }
+
+            // Notify user if messages were found but no URL extracted yet (not "diam")
+            if (isAuto && res.success && res.messages && res.messages.length > 0) {
+                if (autoLinkBadge.classList.contains('hidden')) {
+                    // URL not yet found — let user know we're still trying
+                    if (autoPollSeconds > 10) {
+                        showAlert('📧 Email masuk terdeteksi! Mengekstrak link verifikasi... mohon tunggu.', true, false);
+                    }
+                }
+            }
+        }
+
+        async function readMessageDetailScraper(msgId) {
+            try {
+                console.log('[FIX v2] readMessageDetailScraper called — msgId:', msgId);
+                const res = await tempailScraper.getMessage(msgId);
+                console.log('[FIX v2] getMessage response:', JSON.stringify(res).slice(0, 500));
+
+                if (res.success && res.message) {
+                    const bodyText = res.message.content || '';
+                    console.log('[FIX v2] Email content (first 1000 chars):', bodyText.slice(0, 1000));
+                    const targetUrl = extractVerificationUrl(bodyText);
+                    console.log('[FIX v2] Extracted URL:', targetUrl);
+
+                    if (targetUrl) {
+                        stopAutoPoll();
+                        genVerifyLink.value = targetUrl;
+                        autoLinkBadge.classList.remove('hidden');
+                        showAlert('⚡ Link verifikasi ditemukan! Otomatis memproses aktivasi...', true, false);
+                        executeVerification(savedEmail, targetUrl);
+                    } else {
+                        console.log('[Auto-Verify] Email dibaca tapi tidak ada URL verifikasi ditemukan di konten.');
+                    }
+                } else {
+                    console.log('[Auto-Verify] Gagal membaca detail pesan:', res.error || 'unknown error');
+                }
+            } catch (e) {
+                console.error('[Auto-Verify] Error saat membaca pesan:', e);
+            }
+        }
+
+        function handleGenVerifySubmit(e) {
+            e.preventDefault();
+            const linkVal = genVerifyLink.value.trim();
+            executeVerification(savedEmail, linkVal);
+        }
+
+        // ==================== MODE 3: CEK MAILBOX (KHUSUS BUYER) ====================
+        async function fetchBuyerInbox() {
+            const token = buyerTokenInput.value.trim();
+
+            if (!token) {
+                showAlert('Masukkan Token Email / Secret terlebih dahulu!', false, false);
+                return;
+            }
+
+            showLoading("Memeriksa mailbox buyer...");
+            buyerInboxStatus.textContent = "Memuat pesan...";
+
+            let res;
+            if (currentServer === 'tempail') {
+                res = await tempailScraper.getMessages(token);
+            } else {
+                res = await tempboxScraper.getMessages(token);
+            }
+
+            hideLoading();
+
+            if (res.success && res.messages && res.messages.length > 0) {
+                const newKeys = [];
+
+                buyerInboxList.innerHTML = "";
+
+                res.messages.forEach((msg) => {
+                    const msgKey = getBuyerMsgKey(msg);
+                    const isNew = !seenBuyerMsgKeys.has(msgKey);
+                    if (isNew) newKeys.push(msgKey);
+
+                    const msgCard = document.createElement('div');
+                    msgCard.className = `p-3 bg-slate-900 border rounded-xl space-y-1.5 cursor-pointer hover:border-sky-400 transition-all relative ${isNew ? 'border-neonGreen' : 'border-slate-700'}`;
+
+                    const badgeHtml = isNew
+                        ? `<span class="absolute -top-2 -right-2 bg-neonGreen text-black text-[9px] font-black px-2 py-0.5 rounded-full border-2 border-black nb-shadow-sm">BARU</span>`
+                        : '';
+
+                    if (currentServer === 'tempail') {
+                        msgCard.innerHTML = `
+                            ${badgeHtml}
+                            <div class="flex justify-between font-bold text-white text-xs">
+                                <span class="truncate"><i class="fas fa-envelope text-sky-400 mr-1"></i> ${msg.from}</span>
+                            </div>
+                            <div class="text-xs text-sky-300 font-semibold">${msg.subject || '(Email Verifikasi Alight Motion)'}</div>
+                            <div class="text-[10px] text-slate-400 flex items-center justify-between pt-1">
+                                <span>ID: ${msg.id}</span>
+                                <span class="text-sky-400 font-bold"><i class="fas fa-eye mr-1"></i>Baca & Ekstrak</span>
+                            </div>
+                        `;
+                        msgCard.onclick = () => readBuyerMessageDetail(msg.id);
+                    } else {
+                        msgCard.innerHTML = `
+                            ${badgeHtml}
+                            <div class="flex justify-between font-bold text-white text-xs">
+                                <span class="truncate"><i class="fas fa-envelope text-sky-400 mr-1"></i> ${msg.from}</span>
+                            </div>
+                            <div class="text-xs text-sky-300 font-semibold">${msg.subject || 'Alight Motion'}</div>
+                            <div class="text-[10px] text-slate-400 flex items-center justify-between pt-1">
+                                <span class="truncate">${(msg.body || '').slice(0, 30)}...</span>
+                                <span class="text-sky-400 font-bold whitespace-nowrap"><i class="fas fa-eye mr-1"></i>Baca & Ekstrak</span>
+                            </div>
+                        `;
+
+                        const targetUrl = extractVerificationUrl(msg.html || msg.body) || '';
+
+                        msgCard.onclick = () => openEmailViewModal({
+                            from: msg.from,
+                            subject: msg.subject,
+                            body: msg.body,
+                            targetUrl
+                        });
+                    }
+
+                    buyerInboxList.appendChild(msgCard);
+                });
+
+                newKeys.forEach(k => seenBuyerMsgKeys.add(k));
+                buyerInboxStatus.textContent = newKeys.length > 0
+                    ? `${res.messages.length} email ditemukan (${newKeys.length} baru)`
+                    : `${res.messages.length} email ditemukan`;
+            } else {
+                buyerInboxStatus.textContent = "Kosong / Tidak ditemukan";
+                buyerInboxList.innerHTML = `<div class="text-center py-4 text-slate-500 text-[11px]">Belum ada email masuk untuk token ini.</div>`;
+            }
+        }
+
+        async function readBuyerMessageDetail(msgId) {
+            showLoading("Membaca pesan buyer...");
+            const res = await tempailScraper.getMessage(msgId);
+            hideLoading();
+
+            if (res.success && res.message) {
+                const bodyText = res.message.content || '';
+                const urlMatch = bodyText.match(/https:\/\/[^\s"'<>]+/gi);
+                const targetUrl = (urlMatch && urlMatch.length > 0)
+                    ? (urlMatch.find(u => u.includes('alight') || u.includes('verify')) || urlMatch[0])
+                    : '';
+
+                openEmailViewModal({
+                    from: res.message.from || res.message.fromEmail,
+                    subject: res.message.subject,
+                    body: bodyText,
+                    targetUrl
+                });
+            } else {
+                showAlert('Gagal membaca isi pesan.', false, false);
+            }
+        }
+
+        function clearBuyerInbox() {
+            buyerTokenInput.value = "";
+            buyerEmailInput.value = "";
+            buyerInboxStatus.textContent = "Siap diperiksa";
+            buyerInboxList.innerHTML = `<div class="text-center py-4 text-slate-500 text-[11px]">Masukkan Token Email di atas lalu klik <strong>Cek Inbox Buyer</strong>.</div>`;
+            seenBuyerMsgKeys.clear();
+        }
+
+        // Eksekusi API Verifikasi Umum
+        function executeVerification(email, link) {
+            if (!email || !link) {
+                showAlert('Email dan Link Verifikasi wajib diisi.', false, false);
+                return;
+            }
+
+            if (!link.startsWith('https://')) {
+                showAlert('URL harus diawali https://', false, false);
+                return;
+            }
+
+            showLoading("Memproses verifikasi premium...");
+
+            axios.get(`/api/premium?action=verify&email=${encodeURIComponent(email)}&link=${encodeURIComponent(link)}`, {
+                validateStatus: () => true
+            })
+                .then(res => {
+                    hideLoading();
+                    const data = res.data;
+
+                    if (data && (data.status || data.success)) {
+                        sectionPribadi.classList.add('hidden');
+                        sectionGenerate.classList.add('hidden');
+                        sectionBuyer.classList.add('hidden');
+                        document.getElementById('step-indicator').classList.add('hidden');
+                        hideAlert();
+                        successView.classList.remove('hidden');
+
+                        let details = `
+                            <div class="flex justify-between items-center border-b border-slate-700 pb-1.5">
+                                <span class="text-slate-400">Email:</span>
+                                <span class="font-bold text-white font-mono break-all">${email}</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-slate-700 pb-1.5">
+                                <span class="text-slate-400">Status:</span>
+                                <span class="font-black text-neonGreen">PREMIUM ACTIVE</span>
+                            </div>
+                        `;
+
+                        if (savedToken) {
+                            details += `
+                                <div class="border-b border-slate-700 pb-2 pt-1">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="text-slate-400">Token Email / Secret:</span>
+                                        <button type="button" onclick="copyText('token-email-display', 'Token Email')" class="text-[10px] bg-cyberYellow text-black border border-black font-bold px-2 py-0.5 rounded hover:bg-amber-400">
+                                            <i class="fas fa-copy"></i> Salin
+                                        </button>
+                                    </div>
+                                    <input type="text" id="token-email-display" readonly value="${savedToken}" class="w-full bg-black border border-slate-700 p-1.5 rounded text-[11px] font-mono text-cyberYellow font-bold outline-none">
+                                </div>
+                            `;
+                        }
+
+                        if (data.data && data.data.idToken) {
+                            details += `
+                                <div class="pt-1">
+                                    <span class="text-slate-400 block mb-1">Token Sesi:</span>
+                                    <div class="bg-black border border-slate-700 p-2 rounded text-[10px] font-mono break-all text-slate-300 max-h-20 overflow-y-auto">
+                                        ${data.data.idToken}
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        resultDetails.innerHTML = details;
+                    } else {
+                        const failMsg = data?.message || data?.error || 'Verifikasi gagal. Cek kembali data akun.';
+                        showAlert(failMsg, false, false);
+                    }
+                })
+                .catch(err => {
+                    hideLoading();
+                    showAlert('Terjadi kesalahan koneksi.', false, false);
+                });
+        }
+
+        // Reset Button
+        function resetAllForms() {
+            inputEmail.value = "";
+            inputVerifyLink.value = "";
+            genVerifyLink.value = "";
+            buyerTokenInput.value = "";
+            buyerEmailInput.value = "";
+            savedEmail = "";
+            savedToken = "";
+            hasViewedTutorial = false;
+            isTimerRunning = false;
+            stopAutoPoll();
+
+            const btnSpan = btnSubmitEmail.querySelector('span');
+            btnSpan.textContent = 'Minta Kode Verifikasi';
+            btnIconEmail.className = 'fas fa-paper-plane';
+
+            autoLinkBadge.classList.add('hidden');
+            genEmailBox.classList.add('hidden');
+            document.getElementById('step-indicator').classList.remove('hidden');
+            successView.classList.add('hidden');
+            switchMode(activeMode);
+        }
+
+        // Initialize default tutorial mode content
+        updateTutorialContent('pribadi');
+
+        // ---- Tutup popup pengumuman (dikontrol lewat /setannouncement) ----
+        function closeSiteAnnouncement() {
+            const modal = document.getElementById('site-announcement-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+            try { sessionStorage.setItem('announcementDismissed', '1'); } catch (e) {}
+        }
+
+        // ---- Terapkan konfigurasi tampilan website (dikontrol lewat bot Telegram) ----
+        function applySiteConfig(site) {
+            if (!site) return;
+
+            // Tema warna
+            const root = document.documentElement;
+            if (site.primaryColor) root.style.setProperty('--color-primary', site.primaryColor);
+            if (site.accentColor) root.style.setProperty('--color-accent', site.accentColor);
+            if (site.bgColor) root.style.setProperty('--color-bg', site.bgColor);
+
+            // Branding
+            if (site.brandName) {
+                const el = document.getElementById('brand-name-text');
+                if (el) el.textContent = site.brandName;
+            }
+            if (site.brandBadge) {
+                const el = document.getElementById('brand-badge-text');
+                if (el) el.textContent = site.brandBadge;
+            }
+            if (site.tagline) {
+                const el = document.getElementById('brand-tagline-text');
+                if (el) el.textContent = site.tagline;
+            }
+            if (site.footerText) {
+                const el = document.getElementById('footer-credit-text');
+                if (el) el.innerHTML = site.footerText;
+            }
+            if (site.pageTitle) {
+                document.title = site.pageTitle;
+                const el = document.getElementById('page-title');
+                if (el) el.textContent = site.pageTitle;
+            }
+            if (site.faviconUrl) {
+                const el = document.getElementById('favicon-link');
+                if (el) el.setAttribute('href', site.faviconUrl);
+            }
+            // Logo: foto custom > huruf custom > inisial pertama nama brand
+            const logoBox = document.getElementById('brand-logo-box');
+            if (site.logoUrl && logoBox) {
+                logoBox.innerHTML = `<img src="${site.logoUrl}" class="w-full h-full object-cover rounded-lg" alt="logo"><span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-neonGreen rounded-full pulse-live border border-black"></span>`;
+            } else if (logoBox) {
+                const letter = (site.logoLetter || site.brandName || 'C').trim().charAt(0).toUpperCase();
+                const letterEl = document.getElementById('brand-logo-letter');
+                if (letterEl) letterEl.textContent = letter;
+            }
+
+            // Kontak WhatsApp
+            const waLink = document.getElementById('wa-link');
+            if (waLink && (site.waNumber || site.waMessage)) {
+                const num = site.waNumber || '6281249578370';
+                const msg = site.waMessage || '';
+                waLink.href = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+            }
+
+            // Stok
+            if (site.stock) {
+                const box = document.getElementById('site-stock-badge');
+                const text = document.getElementById('site-stock-text');
+                if (box && text) { text.textContent = site.stock; box.classList.remove('hidden'); box.classList.add('flex'); }
+            }
+
+            // Testimoni
+            if (site.testimoni) {
+                const box = document.getElementById('site-testimoni-card');
+                const text = document.getElementById('site-testimoni-text');
+                if (box && text) { text.textContent = site.testimoni; box.classList.remove('hidden'); }
+            }
+
+            // FAQ
+            if (site.faq) {
+                const box = document.getElementById('site-faq-card');
+                const text = document.getElementById('site-faq-text');
+                if (box && text) { text.textContent = site.faq; box.classList.remove('hidden'); }
+            }
+
+            // Promo banner
+            if (site.promo && site.promo.active && site.promo.text) {
+                const box = document.getElementById('site-promo-banner');
+                const text = document.getElementById('site-promo-text');
+                if (box && text) { text.textContent = site.promo.text; box.classList.remove('hidden'); box.classList.add('flex'); }
+            }
+
+            // Popup pengumuman (sekali per sesi)
+            if (site.announcement && site.announcement.active && site.announcement.text) {
+                let dismissed = false;
+                try { dismissed = sessionStorage.getItem('announcementDismissed') === '1'; } catch (e) {}
+                if (!dismissed) {
+                    const modal = document.getElementById('site-announcement-modal');
+                    const text = document.getElementById('site-announcement-text');
+                    if (modal && text) {
+                        text.textContent = site.announcement.text;
+                        modal.classList.remove('hidden');
+                        modal.classList.add('flex');
+                    }
+                }
+            }
+
+            // Social links
+            if (site.social && Object.keys(site.social).length > 0) {
+                const wrap = document.getElementById('site-social-links');
+                if (wrap) {
+                    const icons = {
+                        instagram: 'fa-instagram', tiktok: 'fa-tiktok', youtube: 'fa-youtube',
+                        facebook: 'fa-facebook', twitter: 'fa-x-twitter', x: 'fa-x-twitter',
+                        telegram: 'fa-telegram', whatsapp: 'fa-whatsapp', github: 'fa-github'
+                    };
+                    wrap.innerHTML = Object.entries(site.social).map(function([platform, url]) {
+                        const icon = icons[platform.toLowerCase()] || 'fa-link';
+                        return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 flex items-center justify-center bg-darkcard border-2 border-black rounded-lg text-slate-300 hover:text-cyberYellow nb-shadow-sm text-xs"><i class="fab ${icon}"></i></a>`;
+                    }).join('');
+                    wrap.classList.remove('hidden');
+                    wrap.classList.add('flex');
+                }
+            }
+
+            // Mode aktivasi: enable/disable, label, badge
+            if (site.modes) {
+                Object.keys(site.modes).forEach(function(mode) {
+                    const cfg = site.modes[mode];
+                    if (!cfg) return;
+                    const tabBtn = document.getElementById('tab-' + mode);
+                    const labelEl = document.getElementById('tab-' + mode + '-label');
+                    const badgeEl = document.getElementById('tab-' + mode + '-badge');
+
+                    if (tabBtn && cfg.enabled === false) {
+                        tabBtn.style.display = 'none';
+                        if (tabBtn.classList.contains('bg-cyberYellow') && typeof requestMode === 'function') {
+                            const fallback = Object.keys(site.modes).find(function(m) { return m !== mode && site.modes[m] && site.modes[m].enabled !== false; });
+                            if (fallback) requestMode(fallback);
+                        }
+                    }
+                    if (labelEl && cfg.label) labelEl.textContent = cfg.label.toUpperCase();
+                    if (badgeEl && cfg.badge) { badgeEl.textContent = cfg.badge.toUpperCase(); badgeEl.classList.remove('hidden'); }
+                });
+            }
+        }
+
+        // ---- Banner peringatan, promo, konfigurasi tampilan & mode maintenance dari Telegram bot ----
+        (async function loadSiteWarning() {
+            try {
+                const res = await axios.get('/api/status');
+                const warning = res.data && res.data.warning;
+                const site = res.data && res.data.site;
+
+                // CEK MAINTENANCE DULU — kalau aktif, tampilkan overlay & sembunyikan UI
+                if (warning && warning.maintenance) {
+                    const overlay = document.getElementById('maintenance-overlay');
+                    const msgEl = document.getElementById('maintenance-message');
+                    if (overlay) {
+                        overlay.classList.remove('hidden');
+                        overlay.classList.add('flex');
+                        if (msgEl && warning.maintenanceMessage) {
+                            msgEl.textContent = warning.maintenanceMessage;
+                        }
+                        // Sembunyikan semua elemen UI utama
+                        document.querySelectorAll('header, main, footer, #initial-modal, #seller-login-modal, #buyer-modal, #site-warning-banner, #site-promo-banner, #site-announcement-modal').forEach(function(el) {
+                            el.style.display = 'none';
+                        });
+                    }
+                    return; // Jangan lanjut ke banner/config kalau sedang maintenance
+                }
+
+                // Terapkan konfigurasi tampilan/konten website
+                applySiteConfig(site);
+
+                // Auto-poll: kalau sedang maintenance, cek tiap 30s. Kalau sudah normal → reload otomatis
+                if (!window.__maintenancePolling) {
+                    window.__maintenancePolling = setInterval(async function() {
+                        try {
+                            var r = await axios.get('/api/status');
+                            var w = r.data && r.data.warning;
+                            if (!w || !w.maintenance) {
+                                clearInterval(window.__maintenancePolling);
+                                location.reload();
+                            }
+                        } catch(e) {}
+                    }, 30000);
+                }
+
+                // Kalau tidak maintenance, tampilkan banner kalau ada
+                if (!warning || !warning.active || !warning.message) return;
+
+                const banner = document.getElementById('site-warning-banner');
+                const iconEl = document.getElementById('site-warning-icon');
+                const textEl = document.getElementById('site-warning-text');
+
+                const styles = {
+                    info:    { bg: 'bg-sky-500',    icon: 'ℹ️' },
+                    warning: { bg: 'bg-cyberYellow text-black', icon: '⚠️' },
+                    danger:  { bg: 'bg-red-600',     icon: '🚨' }
+                };
+                const style = styles[warning.type] || styles.info;
+
+                banner.classList.remove('hidden');
+                banner.classList.add(...style.bg.split(' '));
+                iconEl.textContent = style.icon;
+                textEl.textContent = warning.message;
+            } catch (e) {
+                // Diam aja kalau gagal ambil status, jangan ganggu tampilan utama.
+            }
+        })();
+    </script>
+</body>
+</html>

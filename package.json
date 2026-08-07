@@ -1,0 +1,6 @@
+{
+  "name": "alight-motion-premium-activation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Frontend + backend proxy (Vercel Serverless Functions) untuk layanan aktivasi Alight Motion Premium."
+}

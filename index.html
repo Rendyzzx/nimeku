@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="HZ_vjQOjt1JVwF2jYFJ2r-10piGeLJ9eLMpPR_KBwX8" />
+    <title id="page-title">Cyronime — Portal Layanan Premium</title>
+    <link rel="icon" id="favicon-link" href="data:,">
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: 'var(--color-bg)',
+                        darkcard: '#181A22',
+                        neonGreen: 'var(--color-accent)',
+                        cyberYellow: 'var(--color-primary)',
+                        waGreen: '#25D366'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Space Grotesk', 'sans-serif'],
+                        brand: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-primary: #D6A755;
+            --color-accent: #5C8AA6;
+            --color-bg: #0B0C10;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--color-bg);
+            color: #FFFFFF;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 230, 118, 0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 208, 40, 0.015) 1px, transparent 1px);
+            background-size: 40px 40px, 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center top, rgba(0, 230, 118, 0.04), transparent 60%),
+                        radial-gradient(ellipse at center bottom, rgba(255, 208, 40, 0.03), transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .font-heading { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
+
+        .nb-shadow { box-shadow: 4px 4px 0px 0px #000000; }
+        .nb-shadow-lg { box-shadow: 6px 6px 0px 0px #000000; }
+        .nb-shadow-sm { box-shadow: 2.5px 2.5px 0px 0px #000000; }
+        .nb-shadow-button {
+            box-shadow: 3.5px 3.5px 0px 0px #000000;
+            transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nb-shadow-button:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 1px 1px 0px 0px #000000; }
+        .nb-shadow-button:not(:disabled):hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0px 0px #000000; }
+
+        @keyframes pulseGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .pulse-live { animation: pulseGlow 1.5s ease-in-out infinite; }
+
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
+        .fade-up { animation: fadeUp 0.4s ease both; }
+
+        @keyframes contentFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        main { animation: contentFadeIn 0.5s ease-out; }
+
+        @keyframes modalIn { 0% { opacity: 0; transform: scale(0.92) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-enter { animation: modalIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+        .bg-darkcard { background-image: linear-gradient(180deg, rgba(255,255,255,0.012) 0%, rgba(0,0,0,0.018) 100%); }
+
+        input:focus, textarea:focus { box-shadow: 0 0 0 1px rgba(0, 230, 118, 0.25), 0 0 12px -2px rgba(0, 230, 118, 0.15); }
+
+        .grain {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+            opacity: 0.035; mix-blend-mode: overlay;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0F1015; }
+        ::-webkit-scrollbar-thumb { background: #1a2e23; border-radius: 6px; }
+        ::selection { background: var(--color-primary); color: #000; }
+
+        .nb-spinner {
+            width: 42px; height: 42px;
+            border: 4px solid #181A22; border-top-color: var(--color-accent);
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        p, span, label { letter-spacing: -0.003em; }
+    </style>
+</head>
+<body class="min-h-screen text-white flex flex-col items-center p-4 sm:p-6 relative">
+    <div class="grain"></div>
+
+    <!-- MAINTENANCE OVERLAY -->
+    <div id="maintenance-overlay" class="fixed inset-0 bg-darkbg z-[200] hidden flex-col items-center justify-center p-6 text-center">
+        <div class="relative w-20 h-20 mx-auto mb-5">
+            <img src="https://base44.app/api/apps/6a75119d8897b55540d7e5b4/files/mp/public/6a75119d8897b55540d7e5b4/e49d002b0_f3ee9cabd_36dcd09f2f8593db6fc7e1c52e3e0506.jpg" alt="Admin" class="w-20 h-20 rounded-full object-cover border-2 border-black nb-shadow">
+            <span class="absolute -bottom-1 -right-1 w-7 h-7 bg-cyberYellow border-2 border-black rounded-full flex items-center justify-center text-xs">🛠️</span>
+        </div>
+        <h2 class="font-heading font-extrabold text-xl text-white tracking-tight mb-2">Bentar ya, lagi dibenerin</h2>
+        <p id="maintenance-message" class="text-sm font-medium text-slate-400 max-w-sm mb-5 leading-relaxed">Server sedang dirapikan sebentar. Coba buka lagi beberapa saat lagi ya.</p>
+        <p class="mt-8 text-[11px] text-slate-500 font-medium">&copy; Cyronime Premium Portal</p>
+    </div>
+
+    <!-- WARNING BANNER -->
+    <div id="site-warning-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-start gap-2">
+        <span id="site-warning-icon" class="text-lg leading-none"></span>
+        <span id="site-warning-text" class="flex-1"></span>
+    </div>
+
+    <!-- PROMO BANNER -->
+    <div id="site-promo-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 bg-cyberYellow text-black border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-center gap-2">
+        <span class="text-lg leading-none">🎉</span>
+        <span id="site-promo-text" class="flex-1"></span>
+    </div>
+
+    <!-- HEADER -->
+    <header class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-3 mb-4 relative z-10 text-center">
+        <h1 id="brand-name-text" class="font-brand font-extrabold text-3xl sm:text-4xl tracking-wide text-white mb-2.5" style="text-shadow: 0 2px 12px rgba(0,0,0,0.35);">Cyronime</h1>
+        <div id="hero-banner" class="relative w-full h-36 sm:h-40 rounded-2xl border-2.5 border-black overflow-hidden nb-shadow mb-2.5 bg-darkcard"
+             style="background-image: linear-gradient(180deg, rgba(11,12,16,0.08) 0%, rgba(11,12,16,0.35) 70%, rgba(11,12,16,0.7) 100%), url('https://media.base44.com/images/public/6a75321993e2d284381461e5/94f4b83b5_b81c678da1a7a24ed74c9752c1201fa4.jpg'); background-size: cover; background-position: center 12%;">
+            <span id="brand-badge-text" class="hidden"></span>
+        </div>
+        <p id="brand-tagline-text" class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Pilih Layanan</p>
+    </header>
+
+    <!-- MAIN: SERVICE LIST -->
+    <main class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-1 space-y-4 z-10">
+
+        <!-- SECTION TITLE -->
+        <div class="flex items-center gap-2.5 mb-1">
+            <div class="w-7 h-7 bg-cyberYellow border-2 border-black rounded-lg flex items-center justify-center text-black text-xs nb-shadow-sm">
+                <i class="fas fa-th-large text-[10px]"></i>
+            </div>
+            <h2 class="font-heading font-extrabold text-sm text-white uppercase tracking-wider">Daftar Layanan</h2>
+        </div>
+
+        <!-- LOADING STATE -->
+        <div id="loading-state" class="flex flex-col items-center justify-center py-16">
+            <div class="nb-spinner mb-4"></div>
+            <p class="text-sm font-bold text-slate-400">Memuat layanan...</p>
+        </div>
+
+        <!-- ERROR STATE -->
+        <div id="error-state" class="hidden bg-darkcard border-2.5 border-black rounded-2xl p-6 text-center nb-shadow">
+            <i class="fas fa-exclamation-triangle text-2xl text-red-400 mb-3"></i>
+            <p class="text-sm font-bold text-slate-300 mb-1">Gagal memuat layanan</p>
+            <p class="text-xs text-slate-500">Coba refresh halaman ini.</p>
+        </div>
+
+        <!-- SERVICES GRID -->
+        <div id="services-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+        <!-- EMPTY STATE -->
+        <div id="empty-state" class="hidden bg-darkcard border-2.5 border-black rounded-2xl p-8 text-center nb-shadow">
+            <i class="fas fa-inbox text-3xl text-slate-500 mb-3"></i>
+            <p class="text-sm font-bold text-slate-300 mb-1">Belum ada layanan</p>
+            <p class="text-xs text-slate-500">Layanan akan muncul di sini setelah ditambahkan lewat bot Telegram.</p>
+        </div>
+
+        <!-- WHATSAPP CONTACT -->
+        <div class="bg-darkcard border-2.5 border-black rounded-2xl p-4 nb-shadow flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-waGreen border-2 border-black rounded-xl flex items-center justify-center text-black text-xl font-bold">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Butuh Bantuan?</div>
+                    <div class="text-sm font-extrabold text-white">Hubungi Owner: <span class="text-cyberYellow" id="owner-name">Akirax</span></div>
+                </div>
+            </div>
+            <a id="wa-link" href="https://wa.me/6281249578370?text=Halo%20Akirax,%20saya%20butuh%20bantuan" target="_blank" rel="noopener noreferrer"
+               class="w-full sm:w-auto px-4 py-2.5 bg-waGreen hover:bg-emerald-500 text-black font-extrabold rounded-xl border-2 border-black text-xs nb-shadow-button flex items-center justify-center gap-2">
+                <i class="fab fa-whatsapp text-sm"></i><span>CHAT WHATSAPP</span>
+            </a>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-6 mb-2 text-center text-xs font-bold text-slate-400 space-y-2.5 relative z-10">
+        <div class="inline-flex items-center gap-2 bg-darkcard text-slate-300 border-2 border-black px-3.5 py-1.5 rounded-xl font-bold text-[11px] nb-shadow-sm uppercase tracking-wider">
+            <span id="footer-credit-text">Copyright by <strong class="font-heading text-cyberYellow">Akirax</strong></span>
+        </div>
+        <div id="site-social-links" class="hidden items-center justify-center gap-2"></div>
+        <p class="text-[10px] text-slate-500 font-semibold uppercase tracking-widest">&copy; <span id="year"></span> Cyronime Premium Portal</p>
+    </footer>
+
+    <!-- LOCK MODAL -->
+    <div id="lock-modal" class="hidden fixed inset-0 bg-black/85 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div class="bg-darkcard border-3 border-black p-6 rounded-2xl nb-shadow-lg text-center max-w-sm w-full modal-enter">
+            <div class="w-14 h-14 bg-red-500/20 border-2 border-red-500/40 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-lock text-2xl text-red-400"></i>
+            </div>
+            <h3 class="font-heading font-extrabold text-lg text-white uppercase tracking-wider mb-2">Layanan Terkunci</h3>
+            <p id="lock-modal-text" class="text-sm font-medium text-slate-300 leading-relaxed mb-5">Layanan ini sedang dikunci sementara.</p>
+            <button type="button" onclick="closeLockModal()" class="w-full py-3 px-4 bg-slate-700 hover:bg-slate-600 border-2 border-black font-extrabold text-white rounded-xl text-sm nb-shadow-button cursor-pointer uppercase tracking-wide">
+                Kembali
+            </button>
+        </div>
+    </div>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+        <div class="bg-darkcard border-3 border-black p-6 rounded-2xl nb-shadow-lg text-center max-w-xs w-full space-y-3">
+            <div class="nb-spinner mx-auto"></div>
+            <h4 class="font-heading font-extrabold text-sm text-white uppercase tracking-wider">Memuat...</h4>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // ---- Fetch & render services ----
+        async function loadServices() {
+            try {
+                const [statusRes, servicesRes] = await Promise.all([
+                    axios.get('/api/status'),
+                    axios.get('/api/services')
+                ]);
+
+                const status = statusRes.data || {};
+                const warning = status.warning || {};
+                const site = status.site || {};
+
+                // Maintenance check
+                if (warning.maintenance) {
+                    showMaintenance(warning.maintenanceMessage);
+                    return;
+                }
+
+                // Apply site config
+                applySiteConfig(site, warning);
+
+                // Render services
+                const services = (servicesRes.data && servicesRes.data.services) || [];
+                renderServices(services);
+            } catch (e) {
+                console.error('Load error:', e);
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('error-state').classList.remove('hidden');
+            }
+        }
+
+        function renderServices(services) {
+            const grid = document.getElementById('services-grid');
+            const loading = document.getElementById('loading-state');
+            const empty = document.getElementById('empty-state');
+
+            loading.classList.add('hidden');
+
+            if (!services || services.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            grid.innerHTML = '';
+
+            services.forEach((svc, i) => {
+                const isExternal = svc.page && svc.page.startsWith('http');
+                const isLocked = !!svc.locked;
+                const color = svc.color || '#D6A755';
+                const icon = svc.icon || 'fa-globe';
+                const isImageIcon = /^https?:\/\//.test(icon) || icon.startsWith('/');
+
+                const card = document.createElement('div');
+                card.className = `fade-up bg-darkcard border-2.5 border-black rounded-2xl p-4 nb-shadow relative overflow-hidden ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0px_0px_#000000] transition-all'}`;
+                card.style.animationDelay = `${i * 0.06}s`;
+
+                if (isLocked) {
+                    card.onclick = () => showLockModal(svc.lockMessage || 'Layanan ini sedang dikunci sementara.');
+                } else if (svc.page) {
+                    card.onclick = () => {
+                        if (isExternal) {
+                            window.open(svc.page, '_blank', 'noopener,noreferrer');
+                        } else {
+                            window.location.href = svc.page;
+                        }
+                    };
+                }
+
+                // Lock badge
+                const lockBadge = isLocked
+                    ? `<span class="absolute top-3 right-3 bg-red-500/20 border border-red-500/40 text-red-400 text-[9px] font-black px-2 py-0.5 rounded-full"><i class="fas fa-lock text-[8px] mr-0.5"></i>LOCK</span>`
+                    : '';
+
+                // External badge
+                const extBadge = (!isLocked && isExternal)
+                    ? `<span class="absolute top-3 right-3 bg-darkcard border border-slate-600 text-slate-400 text-[9px] font-bold px-2 py-0.5 rounded-full"><i class="fas fa-external-link-alt text-[8px]"></i></span>`
+                    : '';
+
+                card.innerHTML = `
+                    ${lockBadge}
+                    ${extBadge}
+                    <div class="flex items-start gap-3">
+                        <div class="flex-shrink-0 w-12 h-12 border-2 border-black rounded-xl flex items-center justify-center text-lg nb-shadow-sm overflow-hidden" style="background-color: ${isImageIcon ? 'transparent' : color + '22'}; color: ${color};">
+                            ${isImageIcon ? `<img src="${icon}" class="w-full h-full object-cover" alt="">` : `<i class="fas ${icon}"></i>`}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-heading font-extrabold text-sm text-white truncate">${escapeHtml(svc.name)}</h3>
+                            ${svc.description ? `<p class="text-[11px] text-slate-400 font-medium mt-0.5 line-clamp-2 leading-snug">${escapeHtml(svc.description)}</p>` : ''}
+                            ${!isLocked ? `<div class="mt-2 flex items-center gap-1 text-[10px] font-bold" style="color: ${color};"><span>Buka Layanan</span><i class="fas fa-arrow-right text-[9px]"></i></div>` : ''}
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function showMaintenance(msg) {
+            const overlay = document.getElementById('maintenance-overlay');
+            const msgEl = document.getElementById('maintenance-message');
+            if (msgEl && msg) msgEl.textContent = msg;
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            document.querySelectorAll('header, main, footer').forEach(el => el.style.display = 'none');
+        }
+
+        function applySiteConfig(site, warning) {
+            const root = document.documentElement;
+            if (site.primaryColor) root.style.setProperty('--color-primary', site.primaryColor);
+            if (site.accentColor) root.style.setProperty('--color-accent', site.accentColor);
+            if (site.bgColor) root.style.setProperty('--color-bg', site.bgColor);
+
+            if (site.brandName) document.getElementById('brand-name-text').textContent = site.brandName;
+            if (site.brandBadge) document.getElementById('brand-badge-text').textContent = site.brandBadge;
+            if (site.tagline) document.getElementById('brand-tagline-text').textContent = site.tagline;
+            if (site.footerText) document.getElementById('footer-credit-text').innerHTML = site.footerText;
+            if (site.pageTitle) document.title = site.pageTitle;
+            if (site.faviconUrl) document.getElementById('favicon-link').setAttribute('href', site.faviconUrl);
+
+            // Background header (hero banner) — logo/badge sudah dihapus, brand cuma teks di atas foto
+            if (site.heroImage) {
+                const hero = document.getElementById('hero-banner');
+                if (hero) hero.style.backgroundImage = `linear-gradient(180deg, rgba(11,12,16,0.08) 0%, rgba(11,12,16,0.35) 70%, rgba(11,12,16,0.7) 100%), url('${site.heroImage}')`;
+            }
+
+            // WhatsApp
+            if (site.waNumber || site.waMessage) {
+                const num = site.waNumber || '6281249578370';
+                const msg = site.waMessage || '';
+                document.getElementById('wa-link').href = `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+            }
+
+            // Warning banner
+            if (warning && warning.active && warning.message) {
+                const banner = document.getElementById('site-warning-banner');
+                const icon = document.getElementById('site-warning-icon');
+                const text = document.getElementById('site-warning-text');
+                text.textContent = warning.message;
+                const typeColors = { warning: 'border-amber-400 text-amber-400', danger: 'border-red-500 text-red-400', info: 'border-neonGreen text-neonGreen' };
+                banner.className = `w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-start gap-2 ${typeColors[warning.type] || typeColors.info}`;
+                icon.innerHTML = warning.type === 'danger' ? '<i class="fas fa-exclamation-circle"></i>' : warning.type === 'warning' ? '<i class="fas fa-exclamation-triangle"></i>' : '<i class="fas fa-info-circle"></i>';
+                banner.classList.remove('hidden');
+                banner.classList.add('flex');
+            }
+
+            // Promo banner
+            if (site.promo && site.promo.active && site.promo.text) {
+                const box = document.getElementById('site-promo-banner');
+                document.getElementById('site-promo-text').textContent = site.promo.text;
+                box.classList.remove('hidden');
+                box.classList.add('flex');
+            }
+
+            // Social links
+            if (site.social && Object.keys(site.social).length > 0) {
+                const wrap = document.getElementById('site-social-links');
+                const icons = { instagram: 'fa-instagram', tiktok: 'fa-tiktok', youtube: 'fa-youtube', facebook: 'fa-facebook', twitter: 'fa-x-twitter', x: 'fa-x-twitter', telegram: 'fa-telegram', whatsapp: 'fa-whatsapp', github: 'fa-github' };
+                wrap.innerHTML = Object.entries(site.social).map(([platform, url]) => {
+                    const icon = icons[platform.toLowerCase()] || 'fa-link';
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 flex items-center justify-center bg-darkcard border-2 border-black rounded-lg text-slate-300 hover:text-cyberYellow nb-shadow-sm text-xs"><i class="fab ${icon}"></i></a>`;
+                }).join('');
+                wrap.classList.remove('hidden');
+                wrap.classList.add('flex');
+            }
+        }
+
+        function showLockModal(msg) {
+            document.getElementById('lock-modal-text').textContent = msg;
+            document.getElementById('lock-modal').classList.remove('hidden');
+        }
+        function closeLockModal() {
+            document.getElementById('lock-modal').classList.add('hidden');
+        }
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // Init
+        loadServices();
+    </script>
+</body>
+</html>
