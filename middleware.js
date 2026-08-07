@@ -1,4 +1,4 @@
-// Vercel Middleware — Cek maintenance mode di server-side.
+// Vercel Edge Middleware — Cek maintenance mode di server-side.
 // Saat maintenance aktif, SEMUA halaman (kecuali /api/* dan /maintenance.html)
 // di-redirect ke /maintenance.html
 //
@@ -6,9 +6,11 @@
 //   GITHUB_PAT, GITHUB_WARNING_PATH (atau GITHUB_TOKENS_PATH untuk fallback)
 //
 // File ini HARUS ada di root project (bukan di api/).
-// Vercel otomatis eksekusi middleware.ts/js untuk setiap request.
+// Native Vercel Edge Middleware — TIDAK butuh package next/server.
 
-import { NextResponse } from '@vercel/next/server';
+export const config = {
+  matcher: ['/((?!api|_next|favicon).*)']
+};
 
 // Cache maintenance status biar ga hit GitHub API tiap request
 let maintCache = { status: false, message: '', expiry: 0 };
@@ -20,7 +22,6 @@ async function checkMaintenance() {
   }
 
   try {
-    // Parse path dari env var (sama kayak di github.js)
     const warningPath = process.env.GITHUB_WARNING_PATH || (() => {
       const tokensPath = process.env.GITHUB_TOKENS_PATH;
       if (!tokensPath) return null;
@@ -50,12 +51,19 @@ async function checkMaintenance() {
     if (!res.ok) return { status: false, message: '' };
 
     const data = await res.json();
-    const decoded = JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8'));
+    // Edge runtime punya atob() global, tidak ada Buffer
+    const decoded = JSON.parse(
+      decodeURIComponent(
+        atob(data.content.replace(/\n/g, ''))
+          .split('')
+          .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+          .join('')
+      )
+    );
 
     const status = !!decoded.maintenance;
     const message = decoded.maintenanceMessage || 'Website sedang dalam pemeliharaan.';
 
-    // Cache 30 detik
     maintCache = { status, message, expiry: now + 30000 };
 
     return { status, message };
@@ -64,30 +72,29 @@ async function checkMaintenance() {
   }
 }
 
-export default async function middleware(req) {
-  const { pathname } = req.nextUrl;
+export default async function middleware(request) {
+  const url = new URL(request.url);
+  const { pathname } = url;
 
-  // Skip API routes, static assets, dan maintenance page sendiri
-  if (pathname.startsWith('/api/')) return NextResponse.next();
-  if (pathname === '/maintenance.html') return NextResponse.next();
-  if (pathname === '/robots.txt' || pathname === '/sitemap.xml') return NextResponse.next();
-  if (pathname.match(/\.(ico|png|jpg|jpeg|gif|svg|css|js|woff|woff2|ttf)$/)) return NextResponse.next();
+  if (pathname === '/maintenance.html') {
+    return fetch(request);
+  }
+  if (pathname === '/robots.txt' || pathname === '/sitemap.xml') {
+    return fetch(request);
+  }
+  if (pathname.match(/\.(ico|png|jpg|jpeg|gif|svg|css|js|woff|woff2|ttf)$/)) {
+    return fetch(request);
+  }
 
   const { status, message } = await checkMaintenance();
 
-  if (!status) return NextResponse.next();
+  if (!status) return fetch(request);
 
-  // Kalau akses / (index), biarkan index.html yang handle (biar tampil maintenance overlay)
-  // Tapi kalau akses halaman lain, redirect ke maintenance.html
-  if (pathname === '/') return NextResponse.next();
+  // Biarkan index.html sendiri yang tampilkan overlay maintenance (client-side)
+  if (pathname === '/') return fetch(request);
 
-  // Redirect ke maintenance page dengan pesan
-  const maintUrl = new URL('/maintenance.html', req.url);
+  // Redirect halaman lain ke maintenance.html
+  const maintUrl = new URL('/maintenance.html', request.url);
   maintUrl.searchParams.set('msg', message);
-  return NextResponse.redirect(maintUrl);
+  return Response.redirect(maintUrl, 302);
 }
-
-export const config = {
-  // Match semua path kecuali /api/*
-  matcher: ['/((?!api).*)']
-};
