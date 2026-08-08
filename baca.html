@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CyroMedia — Baca Komik Online Gratis</title>
+<style>
+  :root {
+    --bg-dark: #0e0c0a;
+    --bg-surface: #171410;
+    --bg-card: #201c16;
+    --border-subtle: #23201a;
+    --border-gold: rgba(245, 158, 11, 0.3);
+    
+    --accent-gold: #f59e0b;
+    --accent-gold-soft: rgba(245, 158, 11, 0.12);
+    --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+    
+    --wa-green: #25D366;
+    --wa-gradient: linear-gradient(135deg, #128c7e 0%, #25D366 100%);
+
+    --text-main: #f3f4f6;
+    --text-sub: #9ca3af;
+    --text-muted: #6b7280;
+    
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --nav-height: 60px;
+    --radius-lg: 12px;
+    --radius-md: 8px;
+  }
+
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  html, body {
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    padding-bottom: calc(var(--nav-height) + 16px);
+    overflow-x: hidden;
+  }
+
+  .skeleton {
+    background: #1a1712;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 14px 20px;
+  }
+
+  /* ---------- BRAND HEADER ---------- */
+  .brand-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0 14px;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 16px;
+  }
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: var(--gold-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brand-icon svg { width: 18px; height: 18px; color: #0e0c0a; }
+  .brand-text {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    color: var(--text-main);
+  }
+  .brand-text span { color: var(--accent-gold); }
+  
+  .brand-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-gold);
+    background: var(--accent-gold-soft);
+    border: 1px solid var(--border-gold);
+    padding: 3px 9px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .brand-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-gold);
+  }
+
+  /* ---------- SEARCH BAR ---------- */
+  .search-pill {
+    position: relative;
+    margin-bottom: 16px;
+    max-width: 600px;
+  }
+  .search-pill input {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    padding: 11px 16px 11px 42px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-family: var(--font-sans);
+    outline: none;
+  }
+  .search-pill input:focus {
+    border-color: var(--accent-gold);
+  }
+  .search-pill input::placeholder { color: var(--text-muted); }
+  .search-pill svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-sub);
+    pointer-events: none;
+  }
+
+  /* ---------- TABS NAV ---------- */
+  nav.tabs {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 18px;
+    padding-bottom: 2px;
+  }
+  nav.tabs::-webkit-scrollbar { display: none; }
+  nav.tabs button {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    border-bottom: 2.5px solid transparent;
+    color: var(--text-sub);
+    padding: 6px 2px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  nav.tabs button.active {
+    border-bottom-color: var(--accent-gold);
+    color: var(--accent-gold);
+    font-weight: 700;
+  }
+
+  /* ---------- PROMO CARDS ---------- */
+  .promo-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  @media (min-width: 768px) {
+    .promo-row { gap: 14px; }
+  }
+
+  .promo-card {
+    cursor: pointer;
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
+    position: relative;
+    overflow: hidden;
+    min-height: 95px;
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--bg-surface);
+  }
+  .promo-card .ptitle {
+    font-size: 13px;
+    line-height: 1.3;
+    color: var(--text-main);
+    font-weight: 700;
+    max-width: 82%;
+    z-index: 2;
+  }
+  @media (min-width: 600px) {
+    .promo-card .ptitle { font-size: 14.5px; }
+  }
+
+  .promo-card .prow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    z-index: 2;
+  }
+  .promo-card .psub {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 600;
+  }
+  .promo-card .parrow {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: var(--text-sub);
+    background: #000;
+  }
+
+  .promo-card .picon {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 50px;
+    height: 50px;
+    border-top-left-radius: 16px;
+    border-bottom-right-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .promo-card.genre-card .picon { background: var(--gold-gradient); }
+  .promo-card.wa-card .picon { background: var(--wa-gradient); }
+  .promo-card .picon svg { width: 26px; height: 26px; color: #ffffff; }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin: 6px 0 14px;
+    color: var(--text-main);
+  }
+
+  .genre-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .genre-chip {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-sub);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .genre-chip.active {
+    background: var(--accent-gold);
+    border-color: var(--accent-gold);
+    color: #0e0c0a;
+    font-weight: 700;
+  }
+
+  /* ---------- COMIC GRID ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px 10px;
+  }
+  @media (min-width: 480px) {
+    .grid { grid-template-columns: repeat(3, 1fr); gap: 14px 12px; }
+  }
+  @media (min-width: 768px) {
+    .grid { grid-template-columns: repeat(4, 1fr); gap: 16px 14px; }
+  }
+  @media (min-width: 1024px) {
+    .grid { grid-template-columns: repeat(5, 1fr); gap: 18px 16px; }
+  }
+  @media (min-width: 1280px) {
+    .grid { grid-template-columns: repeat(6, 1fr); }
+  }
+
+  .card {
+    cursor: pointer;
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg-surface);
+    aspect-ratio: 2 / 3;
+    border: 1px solid var(--border-subtle);
+    content-visibility: auto;
+    contain-intrinsic-size: 0 250px;
+  }
+  
+  @media (hover: hover) {
+    .card:hover {
+      border-color: var(--border-gold);
+    }
+    .hist-row:hover, .bm-row:hover, .chapter-row:hover {
+      border-color: var(--border-gold);
+    }
+  }
+
+  .card .cover-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .card img.loaded { opacity: 1; }
+  .card .ph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 11px;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .card .card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(14, 12, 10, 0.95) 0%, rgba(14, 12, 10, 0.3) 50%, transparent 80%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 10px 8px;
+    z-index: 2;
+  }
+
+  .card .title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.25;
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card .meta-line {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    color: #d1d5db;
+    font-weight: 600;
+  }
+  .card .meta-line .stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: #000;
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+  .card .meta-line svg {
+    width: 10px;
+    height: 10px;
+    flex-shrink: 0;
+  }
+  .card .meta-line .star { color: var(--accent-gold); }
+  .card .meta-line .star svg { color: var(--accent-gold); fill: var(--accent-gold); }
+
+  .empty, .loading, .error {
+    text-align: center;
+    padding: 40px 16px;
+    color: var(--text-sub);
+    font-size: 13px;
+  }
+  .error { color: #f87171; }
+  .spine-loader {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-subtle);
+    border-top-color: var(--accent-gold);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---------- LOAD MORE BOX ---------- */
+  .load-more-box {
+    text-align: center;
+    padding: 24px 0 10px;
+  }
+  .load-more-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  /* ---------- WATERMARK FOOTER ---------- */
+  .app-footer {
+    text-align: center;
+    padding: 28px 0 12px;
+    margin-top: 20px;
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-muted);
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .app-footer span {
+    color: var(--accent-gold);
+    font-weight: 700;
+  }
+
+  /* ---------- BOTTOM NAVIGATION BAR ---------- */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    z-index: 60;
+    background: rgba(23, 20, 16, 0.96);
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 768px) {
+    .bottom-nav {
+      bottom: 16px;
+      max-width: 400px;
+      border-radius: 999px;
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      background: rgba(23, 20, 16, 0.98);
+    }
+  }
+
+  .bottom-nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 10.5px;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .bottom-nav button.active {
+    color: var(--accent-gold);
+    font-weight: 700;
+  }
+  .bottom-nav button.active svg { color: var(--accent-gold); }
+  .bottom-nav svg { width: 19px; height: 19px; color: var(--text-muted); }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* History & Bookmark Row */
+  .hist-row, .bm-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .hist-row img, .bm-row img {
+    width: 46px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background: var(--bg-card);
+  }
+  .hist-row .htext, .bm-row .btext { flex: 1; min-width: 0; }
+  .hist-row .htitle, .bm-row .btitle {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .hist-row .hsub { font-size: 11.5px; color: var(--text-sub); margin-top: 3px; }
+  
+  .clear-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-sub);
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+
+  /* ---------- DETAIL OVERLAY ---------- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-dark);
+    z-index: 100;
+    overflow-y: auto;
+    display: none;
+  }
+  .overlay.open { display: block; }
+  .overlay-bar {
+    position: sticky;
+    top: 0;
+    background: rgba(23, 20, 16, 0.96);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+  }
+  .back-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .overlay-bar .ttl {
+    font-size: 14.5px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+  .detail-bm {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .detail-bm svg { width: 17px; height: 17px; color: var(--text-sub); }
+  .detail-bm.on svg { color: var(--accent-gold); fill: var(--accent-gold); }
+
+  .detail-hero { 
+    display: flex; 
+    gap: 16px; 
+    padding: 20px 16px; 
+    max-width: 900px; 
+    margin: 0 auto; 
+  }
+  .detail-cover {
+    width: 130px;
+    flex-shrink: 0;
+    aspect-ratio: 2/3;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+  }
+  @media (min-width: 768px) {
+    .detail-cover { width: 160px; }
+  }
+  .detail-cover img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.15s; }
+  .detail-cover img.loaded { opacity: 1; }
+  .detail-info h1 { font-size: 20px; font-weight: 800; margin-bottom: 6px; line-height: 1.25; }
+  .detail-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .meta-pill {
+    font-size: 10.5px;
+    font-weight: 600;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-gold);
+    padding: 3px 8px;
+    border-radius: 5px;
+    color: var(--accent-gold);
+  }
+  .synopsis { max-width: 900px; margin: 0 auto; padding: 0 16px 14px; color: var(--text-sub); font-size: 13.5px; line-height: 1.55; }
+  .genre-tags { max-width: 900px; margin: 0 auto; padding: 0 16px 16px; display: flex; flex-wrap: wrap; gap: 5px; }
+  .genre-tags span {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    color: var(--text-sub);
+  }
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 14px;
+    margin-bottom: 10px;
+  }
+  .chapter-header h2 { font-size: 15px; font-weight: 800; }
+  .chapter-order-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-sub);
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .chapter-list { max-width: 900px; margin: 0 auto; padding: 0 16px 30px; }
+  .chapter-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 14px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    content-visibility: auto;
+    contain-intrinsic-size: 0 42px;
+  }
+  .chapter-row .date { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+
+  /* ---------- READER OVERLAY ---------- */
+  .reader { position: fixed; inset: 0; background: #000; z-index: 200; display: none; overflow-y: auto; }
+  .reader.open { display: block; }
+  .reader-bar {
+    position: sticky;
+    top: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 10;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #1a1a1a;
+  }
+  .reader-bar .ttl { font-size: 13px; color: #e2e8f0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .reader-pages { max-width: 768px; margin: 0 auto; padding-bottom: 50px; }
+  .page-slot { width: 100%; aspect-ratio: 2/3; background: #080808; content-visibility: auto; contain-intrinsic-size: 0 600px; }
+  .page-slot img { width: 100%; display: block; opacity: 0; transition: opacity 0.2s ease; height: auto; }
+  .page-slot img.loaded { opacity: 1; }
+  .reader-nav {
+    position: sticky;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    border-top: 1px solid #1a1a1a;
+    padding: 10px 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .reader-nav button {
+    background: var(--accent-gold);
+    border: none;
+    color: #000;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .reader-nav button:disabled { background: #1a1a1a; color: #444; cursor: not-allowed; }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    bottom: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--accent-gold);
+    color: var(--text-main);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 300;
+    display: none;
+  }
+  .toast.show { display: block; }
+
+  /* Progress Bar in Reader */
+  .read-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent-gold);
+    z-index: 210;
+    width: 0%;
+  }
+</style>
+</head>
+<body>
+
+<main>
+  <!-- App Brand Header -->
+  <div class="brand-header">
+    <a href="#" class="brand-logo" onclick="showView('discover')">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="brand-text">Cyro<span>Media</span></span>
+    </a>
+    <span class="brand-badge"><span class="dot"></span> ID</span>
+  </div>
+
+  <!-- ===== TEMUKAN (DISCOVER) VIEW ===== -->
+  <section id="view-discover" class="view active">
+    <!-- Search Bar -->
+    <div class="search-pill">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="searchInput" type="text" placeholder="Isi judul komik yang ingin baca" onkeydown="if(event.key==='Enter')doSearch()">
+    </div>
+
+    <!-- Tabs Nav -->
+    <nav class="tabs">
+      <button data-tab="latest" class="active" onclick="goTab('latest')">Updated</button>
+      <button data-tab="manga" onclick="goTab('manga')">Manga</button>
+      <button data-tab="manhwa" onclick="goTab('manhwa')">Manhwa</button>
+      <button data-tab="manhua" onclick="goTab('manhua')">Manhua</button>
+      <button data-tab="populer" onclick="goTab('populer')">Populer</button>
+      <button data-tab="top" onclick="goTab('top')">Top</button>
+      <button data-tab="recomen" onclick="goTab('recomen')">Rekomendasi</button>
+      <button data-tab="genres" onclick="goTab('genres')">Genre</button>
+    </nav>
+
+    <!-- Promo Cards Row -->
+    <div class="promo-row">
+      <div class="promo-card genre-card" onclick="goTab('genres')">
+        <div class="ptitle">Cari Komik dengan Genre</div>
+        <div class="prow"><span class="psub">Lihat semua</span><span class="parrow">→</span></div>
+        <div class="picon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </div>
+      </div>
+      <div class="promo-card wa-card" onclick="openWhatsApp()">
+        <div class="ptitle">Saluran WhatsApp</div>
+        <div class="prow"><span class="psub">Gabung</span><span class="parrow">→</span></div>
+        <div class="picon">
+          <!-- Vektor Resmi WhatsApp Presisi -->
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984a9.96 9.96 0 001.333 4.993L2 22l5.233-1.237a9.96 9.96 0 004.779 1.217h.004c5.505 0 9.988-4.478 9.989-9.984A9.967 9.967 0 0012.012 2zm.003 16.29h-.003a8.272 8.272 0 01-4.218-1.161l-.302-.18-3.13.74.836-3.047-.197-.315a8.272 8.272 0 01-1.265-4.343c.001-4.568 3.72-8.286 8.288-8.286 2.213 0 4.293.863 5.858 2.43 1.564 1.566 2.425 3.647 2.424 5.86-.002 4.569-3.72 8.287-8.29 8.287zm4.542-6.208c-.249-.125-1.472-.727-1.7-.822-.228-.095-.394-.142-.56.143-.166.284-.643.822-.788.988-.145.166-.29.189-.539.064-.249-.125-1.052-.388-2.003-1.237-.74-.66-1.24-1.475-1.385-1.724-.145-.249-.015-.384.109-.508.112-.112.249-.291.374-.436.124-.145.166-.249.249-.415.083-.166.041-.311-.021-.436-.062-.124-.56-1.349-.768-1.847-.203-.485-.409-.419-.56-.428l-.478-.009c-.166 0-.436.062-.664.311s-.871.851-.871 2.076.892 2.408 1.017 2.574c.124.166 1.756 2.682 4.254 3.761.594.306 1.058.489 1.42.626.597.19 1.141.163 1.571.099.479-.071 1.472-.602 1.68-1.184.208-.582.208-1.08.145-1.184z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div id="sectionTitle" class="section-title" style="display:none;"></div>
+    <div id="content"><div class="loading"><span class="spine-loader"></span>Memuat CyroMedia…</div></div>
+    
+    <!-- Watermark Footer -->
+    <footer class="app-footer">
+      CyroMedia &copy; 2026 &bull; Developed by <span>AkiraX</span>
+    </footer>
+  </section>
+
+  <!-- ===== RAK BUKU (BOOKMARKS) VIEW ===== -->
+  <section id="view-rakbuku" class="view">
+    <div class="section-title">Rak Buku Saya</div>
+    <div id="bookmarkContent"></div>
+    <footer class="app-footer">
+      CyroMedia &copy; 2026 &bull; Developed by <span>AkiraX</span>
+    </footer>
+  </section>
+
+  <!-- ===== SAYA (HISTORY) VIEW ===== -->
+  <section id="view-saya" class="view">
+    <div class="section-title">Riwayat Baca</div>
+    <button class="clear-btn" onclick="clearHistory()">Hapus Riwayat</button>
+    <div id="historyContent"></div>
+    <footer class="app-footer">
+      CyroMedia &copy; 2026 &bull; Developed by <span>AkiraX</span>
+    </footer>
+  </section>
+</main>
+
+<!-- BOTTOM NAVIGATION BAR -->
+<nav class="bottom-nav">
+  <button id="navRakbuku" onclick="showView('rakbuku')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+    Rak Buku
+  </button>
+  <button id="navTemukan" class="active" onclick="showView('discover')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Temukan
+  </button>
+  <button id="navSaya" onclick="showView('saya')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+    Saya
+  </button>
+</nav>
+
+<!-- DETAIL OVERLAY -->
+<div class="overlay" id="detailOverlay">
+  <div class="overlay-bar">
+    <button class="back-btn" onclick="closeDetail()">←</button>
+    <div class="ttl" id="detailTitleBar">Detail Komik</div>
+    <button class="detail-bm" id="detailBmBtn" onclick="toggleBookmarkCurrent()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+    </button>
+  </div>
+  <div id="detailContent"></div>
+</div>
+
+<!-- READER OVERLAY -->
+<div class="reader" id="readerOverlay">
+  <div class="read-progress" id="readProgress"></div>
+  <div class="reader-bar">
+    <button class="back-btn" onclick="closeReader()">←</button>
+    <div class="ttl" id="readerTitleBar">Chapter</div>
+  </div>
+  <div class="reader-pages" id="readerPages"></div>
+  <div class="reader-nav">
+    <button id="prevChBtn" onclick="prevChapter()">‹ Prev</button>
+    <button id="nextChBtn" onclick="nextChapter()">Next ›</button>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+// Semua request sekarang lewat backend sendiri di /api/* (lihat api/[...path].js).
+// Alamat API asli & proxy CORS publik sudah TIDAK dipakai lagi di sisi frontend.
+const EP = {
+  list:      () => `/api/list`,
+  search:    (q) => `/api/search/${encodeURIComponent(q)}`,
+  genres:    () => `/api/genres`,
+  byGenre:   (g) => `/api/genre/${encodeURIComponent(g)}`,
+  detail:    (slug) => `/api/detail/${slug}`,
+  chapter:   (slug) => `/api/chapter/${slug}`,
+  recomen:   () => `/api/recomen`,
+  latest:    () => `/api/latest`,
+  populer:   () => `/api/populer`,
+  onlyType:  (t) => `/api/only/${t}`,
+  top:       () => `/api/top`,
+};
+
+let state = { navigation:{next:null,prev:null}, currentChapterSlug:null, isReverseOrder: false, currentChapters: [] };
+let currentComic = null;
+
+/* ---------- Global Pool & Deduplication State ---------- */
+let allComicsPool = [];
+let isPoolFetching = false;
+
+let pState = {
+  tab: 'latest',
+  page: 1,
+  loading: false,
+  hasMore: true,
+  query: '',
+  genreSlug: '',
+  genreName: '',
+  loadedSlugs: new Set()
+};
+
+/* ---------- Pembersih Gambar Ke Resolusi Jernih ---------- */
+function getHighResImage(url) {
+  if (!url) return '';
+  let cleanUrl = url.split('?')[0];
+  cleanUrl = cleanUrl.replace(/-\d+x\d+(\.(jpg|jpeg|png|webp|gif))/gi, '$1');
+  return cleanUrl;
+}
+
+/* ---------- Toast Notification ---------- */
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 2000);
+}
+
+/* ---------- Fetch ke backend sendiri (/api/...) ---------- */
+async function api(path){
+  const controller = new AbortController();
+  const timeout = setTimeout(()=>controller.abort(), 10000);
+  try {
+    const res = await fetch(path, {signal: controller.signal});
+    const json = await res.json().catch(()=>null);
+    if(!res.ok || (json && json.success === false)){
+      throw new Error((json && json.message) || ('HTTP ' + res.status));
+    }
+    return json;
+  } catch(err) {
+    throw new Error('Gagal memuat data: ' + err.message);
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+/* ---------- Pre-fetch Pool Komik Cadangan ---------- */
+async function ensureComicsPool() {
+  if (allComicsPool.length > 0 || isPoolFetching) return;
+  isPoolFetching = true;
+  try {
+    const endpoints = [EP.list(), EP.populer(), EP.recomen(), EP.top()];
+    for (const ep of endpoints) {
+      try {
+        const data = await api(ep);
+        if (data && Array.isArray(data.komikList)) {
+          data.komikList.forEach(item => {
+            const id = item.slug || item.title;
+            if (id && !allComicsPool.some(x => (x.slug || x.title) === id)) {
+              allComicsPool.push(item);
+            }
+          });
+        }
+      } catch (e) {}
+    }
+  } catch(e) {
+  } finally {
+    isPoolFetching = false;
+  }
+}
+
+/* Helper Mengambil Data Tab ---------- */
+async function getTabData(tab, page) {
+  let basePath = '';
+  if (tab === 'latest') basePath = EP.latest();
+  else if (tab === 'populer') basePath = EP.populer();
+  else if (tab === 'top') basePath = EP.top();
+  else if (tab === 'recomen') basePath = EP.recomen();
+  else if (['manga','manhwa','manhua'].includes(tab)) basePath = EP.onlyType(tab);
+  else if (tab === 'search') basePath = EP.search(pState.query);
+  else if (tab === 'genre') basePath = EP.byGenre(pState.genreSlug);
+  else basePath = EP.list();
+
+  if (page <= 1) {
+    return await api(basePath);
+  }
+
+  // Format pengujian parameter pagination
+  const pageVariants = [
+    `${basePath}/page/${page}`,
+    `${basePath}/${page}`,
+    basePath + (basePath.includes('?') ? '&' : '?') + 'page=' + page
+  ];
+
+  for (const path of pageVariants) {
+    try {
+      const res = await api(path);
+      if (res && Array.isArray(res.komikList) && res.komikList.length > 0) {
+        return res;
+      }
+    } catch (e) {}
+  }
+
+  return { komikList: [] };
+}
+
+/* ---------- Lazy-Load Images Observer ---------- */
+const lazyObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting) return;
+    const img = entry.target;
+    lazyObserver.unobserve(img);
+    const src = img.dataset.src;
+    if(!src){ handleImgError(img); return; }
+    img.src = src;
+  });
+}, {rootMargin:'150px 0px'});
+
+function handleImgLoad(img){
+  img.classList.add('loaded');
+  const holder = img.closest('.cover-wrapper, .detail-cover, .page-slot');
+  if(holder) holder.classList.remove('skeleton');
+}
+
+function handleImgError(img){
+  const holder = img.closest('.cover-wrapper, .detail-cover, .page-slot');
+  const title = img.dataset.title || '';
+  if(holder){
+    holder.classList.remove('skeleton');
+    holder.innerHTML = `<div class="ph">${title ? escapeHtml(title) : 'Gambar tidak tersedia'}</div>`;
+  }
+}
+
+function wireLazyImages(root){
+  root.querySelectorAll('img[data-src]').forEach(img=>{
+    img.addEventListener('load', ()=>handleImgLoad(img));
+    img.addEventListener('error', ()=>handleImgError(img));
+    lazyObserver.observe(img);
+  });
+}
+
+function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function escapeAttr(s){ return String(s||'').replace(/'/g, "\\'"); }
+
+/* ---------- Bookmarks & History (localStorage) ---------- */
+const LS_BOOKMARKS = 'cyro_bookmarks';
+const LS_HISTORY = 'cyro_history';
+
+function getBookmarks(){ try{ return JSON.parse(localStorage.getItem(LS_BOOKMARKS)) || []; }catch(e){ return []; } }
+function saveBookmarks(list){ localStorage.setItem(LS_BOOKMARKS, JSON.stringify(list)); }
+function isBookmarked(slug){ return getBookmarks().some(b=>b.slug===slug); }
+
+function toggleBookmark(comic){
+  let list = getBookmarks();
+  const exists = list.some(b=>b.slug===comic.slug);
+  if(exists){
+    list = list.filter(b=>b.slug!==comic.slug);
+    showToast('Dihapus dari Rak Buku');
+  } else {
+    list.unshift(comic);
+    showToast('Disimpan ke Rak Buku');
+  }
+  saveBookmarks(list);
+  return !exists;
+}
+
+function toggleBookmarkCurrent(){
+  if(!currentComic) return;
+  const on = toggleBookmark(currentComic);
+  document.getElementById('detailBmBtn').classList.toggle('on', on);
+}
+
+function getHistory(){ try{ return JSON.parse(localStorage.getItem(LS_HISTORY)) || []; }catch(e){ return []; } }
+function pushHistory(entry){
+  let list = getHistory().filter(h=>h.slug !== entry.slug);
+  list.unshift(entry);
+  if(list.length > 40) list = list.slice(0,40);
+  localStorage.setItem(LS_HISTORY, JSON.stringify(list));
+}
+function clearHistory(){
+  localStorage.removeItem(LS_HISTORY);
+  renderHistory();
+  showToast('Riwayat dibersihkan');
+}
+
+function renderBookmarks(){
+  const box = document.getElementById('bookmarkContent');
+  const list = getBookmarks();
+  if(!list.length){
+    box.innerHTML = `<div class="empty">Belum ada komik tersimpan di rak buku.</div>`;
+    return;
+  }
+  // Catatan performa: baris kecil (46x64) memakai cover thumbnail apa adanya,
+  // TIDAK di-upscale ke full-res, supaya decode gambar tetap ringan.
+  box.innerHTML = list.map(b => {
+    return `
+      <div class="bm-row" onclick="openDetail('${escapeAttr(b.slug)}')">
+        <img data-src="${b.cover||''}" data-title="${escapeAttr(b.title)}" class="lazy-img" alt="" loading="lazy" width="46" height="64">
+        <div class="btext">
+          <div class="btitle">${escapeHtml(b.title)}</div>
+          <div class="hsub">${escapeHtml(b.type || 'Komik')}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  wireLazyImages(box);
+}
+
+function renderHistory(){
+  const box = document.getElementById('historyContent');
+  const list = getHistory();
+  if(!list.length){
+    box.innerHTML = `<div class="empty">Belum ada riwayat baca.</div>`;
+    return;
+  }
+  box.innerHTML = list.map(h => {
+    return `
+      <div class="hist-row" onclick="openReader('${escapeAttr(h.chapterSlug)}')">
+        <img data-src="${h.cover||''}" data-title="${escapeAttr(h.title)}" class="lazy-img" alt="" loading="lazy" width="46" height="64">
+        <div class="htext">
+          <div class="htitle">${escapeHtml(h.title)}</div>
+          <div class="hsub">${escapeHtml(h.chapterTitle || h.chapterSlug)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  wireLazyImages(box);
+}
+
+/* ---------- View Switching ---------- */
+function showView(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  document.getElementById('navRakbuku').classList.toggle('active', view==='rakbuku');
+  document.getElementById('navTemukan').classList.toggle('active', view==='discover');
+  document.getElementById('navSaya').classList.toggle('active', view==='saya');
+  window.scrollTo(0,0);
+  if(view === 'rakbuku') renderBookmarks();
+  if(view === 'saya') renderHistory();
+}
+
+function openWhatsApp(){
+  window.open('https://whatsapp.com/channel/0029Vb8AgskLY6dCvnTjxU3c', '_blank');
+}
+
+/* ---------- Comic Card Component ---------- */
+function comicCardHTML(c){
+  const title = c.title || 'Tanpa Judul';
+  // Thumbnail grid dibiarkan di resolusi kecil bawaan API (jangan getHighResImage di sini).
+  // Memaksa semua kartu ke gambar full-res adalah penyebab utama scroll berat:
+  // puluhan/ratusan gambar besar harus di-decode sekaligus saat infinite scroll.
+  const img = c.cover || '';
+  const rating = c.rating || '8.0';
+  const chapter = c.chapter || c.views || '';
+  const slug = c.slug || '';
+
+  const imgContent = img
+    ? `<img class="lazy-img" data-src="${img}" data-title="${escapeAttr(title)}" alt="" decoding="async" loading="lazy">`
+    : `<div class="ph">${escapeHtml(title)}</div>`;
+
+  return `
+    <div class="card" onclick="openDetail('${escapeAttr(slug)}')">
+      <div class="cover-wrapper ${img ? 'skeleton' : ''}">${imgContent}</div>
+      <div class="card-overlay">
+        <div class="title">${escapeHtml(title)}</div>
+        <div class="meta-line">
+          ${rating ? `<span class="stat star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.6 6.8L12 16.9 5.8 20.3l1.6-6.8L2.2 8.9l6.9-.6z"/></svg>${escapeHtml(String(rating))}</span>` : ''}
+          ${chapter ? `<span class="stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>${escapeHtml(String(chapter))}</span>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function setSectionTitle(text){
+  const el = document.getElementById('sectionTitle');
+  if(text){ el.textContent = text; el.style.display = ''; }
+  else { el.style.display = 'none'; }
+}
+
+/* ---------- Tab Loading & Pagination Logic ---------- */
+async function loadTab(tab){
+  pState.tab = tab;
+  pState.page = 1;
+  pState.hasMore = true;
+  pState.loading = true;
+  pState.loadedSlugs.clear();
+
+  const content = document.getElementById('content');
+  content.innerHTML = `<div class="loading"><span class="spine-loader"></span>Memuat CyroMedia…</div>`;
+  
+  const titles = {
+    latest: null, populer: 'Komik Populer', top: 'Top Komik',
+    recomen: 'Rekomendasi', genres: 'Pilih Genre', manga: 'Manga', manhwa: 'Manhwa', manhua: 'Manhua'
+  };
+  setSectionTitle(titles[tab] || null);
+
+  ensureComicsPool();
+
+  try {
+    if(tab === 'genres'){
+      const data = await api(EP.genres());
+      const genres = data.genres || [];
+      if(!genres.length){ content.innerHTML = `<div class="empty">Genre tidak ditemukan.</div>`; return; }
+      content.innerHTML = `<div class="genre-row">${genres.map(g=>
+        `<button class="genre-chip" onclick="loadGenre('${escapeAttr(g.slug)}','${escapeAttr(g.title)}')">${escapeHtml(g.title)}</button>`
+      ).join('')}</div><div id="genreResults"></div>`;
+      pState.loading = false;
+      return;
+    }
+
+    const data = await getTabData(tab, 1);
+    const list = data.komikList || [];
+
+    const uniqueList = list.filter(item => {
+      const id = item.slug || item.title;
+      if (!id || pState.loadedSlugs.has(id)) return false;
+      pState.loadedSlugs.add(id);
+      return true;
+    });
+
+    if(!uniqueList.length){
+      content.innerHTML = `<div class="empty">Tidak ada komik ditemukan.</div>`;
+      pState.hasMore = false;
+    } else {
+      content.innerHTML = `
+        <div class="grid" id="comicGrid">${uniqueList.map(comicCardHTML).join('')}</div>
+        <div id="loadMoreBox" class="load-more-box"></div>
+      `;
+      wireLazyImages(content);
+    }
+  } catch(err) {
+    content.innerHTML = `<div class="error">Gagal memuat data.<br>${escapeHtml(err.message)}</div>`;
+    pState.hasMore = false;
+  } finally {
+    pState.loading = false;
+    updateLoadMoreUI();
+  }
+}
+
+async function loadGenre(slug, name){
+  pState.tab = 'genre';
+  pState.genreSlug = slug;
+  pState.genreName = name;
+  pState.page = 1;
+  pState.hasMore = true;
+  pState.loading = true;
+  pState.loadedSlugs.clear();
+
+  const box = document.getElementById('genreResults');
+  document.querySelectorAll('.genre-chip').forEach(b=>b.classList.remove('active'));
+  if(window.event && window.event.target) window.event.target.classList.add('active');
+  box.innerHTML = `<div class="loading"><span class="spine-loader"></span>Memuat "${escapeHtml(name)}"…</div>`;
+
+  try {
+    const data = await getTabData('genre', 1);
+    const list = data.komikList || [];
+
+    const uniqueList = list.filter(item => {
+      const id = item.slug || item.title;
+      if (!id || pState.loadedSlugs.has(id)) return false;
+      pState.loadedSlugs.add(id);
+      return true;
+    });
+
+    if(!uniqueList.length){
+      box.innerHTML = `<div class="empty">Komik genre "${escapeHtml(name)}" tidak ditemukan.</div>`;
+      pState.hasMore = false;
+    } else {
+      box.innerHTML = `
+        <div class="grid" id="comicGrid">${uniqueList.map(comicCardHTML).join('')}</div>
+        <div id="loadMoreBox" class="load-more-box"></div>
+      `;
+      wireLazyImages(box);
+    }
+  } catch(err) {
+    box.innerHTML = `<div class="error">Gagal memuat genre.<br>${escapeHtml(err.message)}</div>`;
+    pState.hasMore = false;
+  } finally {
+    pState.loading = false;
+    updateLoadMoreUI();
+  }
+}
+
+function goTab(tab){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  window.scrollTo(0, 0);
+  loadTab(tab);
+}
+
+async function doSearch(){
+  const q = document.getElementById('searchInput').value.trim();
+  if(!q) return;
+
+  pState.tab = 'search';
+  pState.query = q;
+  pState.page = 1;
+  pState.hasMore = true;
+  pState.loading = true;
+  pState.loadedSlugs.clear();
+
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+  setSectionTitle(`Hasil pencarian: "${q}"`);
+  const content = document.getElementById('content');
+  content.innerHTML = `<div class="loading"><span class="spine-loader"></span>Mencari komik…</div>`;
+
+  try {
+    const data = await getTabData('search', 1);
+    const list = data.komikList || [];
+
+    const uniqueList = list.filter(item => {
+      const id = item.slug || item.title;
+      if (!id || pState.loadedSlugs.has(id)) return false;
+      pState.loadedSlugs.add(id);
+      return true;
+    });
+
+    if(!uniqueList.length){
+      content.innerHTML = `<div class="empty">Komik "${escapeHtml(q)}" tidak ditemukan.</div>`;
+      pState.hasMore = false;
+    } else {
+      content.innerHTML = `
+        <div class="grid" id="comicGrid">${uniqueList.map(comicCardHTML).join('')}</div>
+        <div id="loadMoreBox" class="load-more-box"></div>
+      `;
+      wireLazyImages(content);
+    }
+  } catch(err) {
+    content.innerHTML = `<div class="error">Gagal mencari.<br>${escapeHtml(err.message)}</div>`;
+    pState.hasMore = false;
+  } finally {
+    pState.loading = false;
+    updateLoadMoreUI();
+  }
+}
+
+/* ---------- Infinite Scroll Dengan Fallback Multisource ---------- */
+async function loadNextPage(){
+  if(pState.loading || !pState.hasMore) return;
+  pState.loading = true;
+  updateLoadMoreUI();
+
+  const nextPage = pState.page + 1;
+  let newUniqueItems = [];
+
+  try {
+    const data = await getTabData(pState.tab, nextPage);
+    const list = data.komikList || [];
+
+    newUniqueItems = list.filter(item => {
+      const id = item.slug || item.title;
+      if (!id || pState.loadedSlugs.has(id)) return false;
+      pState.loadedSlugs.add(id);
+      return true;
+    });
+
+    if (newUniqueItems.length === 0) {
+      await ensureComicsPool();
+      
+      const tabFilter = ['manga','manhwa','manhua'].includes(pState.tab) ? pState.tab : null;
+      
+      let candidatePool = allComicsPool.filter(item => {
+        const id = item.slug || item.title;
+        if (!id || pState.loadedSlugs.has(id)) return false;
+        if (tabFilter && item.type) {
+          return item.type.toLowerCase().includes(tabFilter);
+        }
+        return true;
+      });
+
+      newUniqueItems = candidatePool.slice(0, 18);
+      newUniqueItems.forEach(item => {
+        const id = item.slug || item.title;
+        if (id) pState.loadedSlugs.add(id);
+      });
+    }
+
+    if (!newUniqueItems.length) {
+      pState.hasMore = false;
+    } else {
+      pState.page = nextPage;
+      const grid = document.getElementById('comicGrid');
+      if (grid) {
+        grid.insertAdjacentHTML('beforeend', newUniqueItems.map(comicCardHTML).join(''));
+        wireLazyImages(grid);
+      }
+    }
+  } catch(err) {
+    pState.hasMore = false;
+  } finally {
+    pState.loading = false;
+    updateLoadMoreUI();
+  }
+}
+
+function updateLoadMoreUI(){
+  const box = document.getElementById('loadMoreBox');
+  if(!box) return;
+  if(pState.loading){
+    box.innerHTML = `<div class="loading" style="padding:10px;"><span class="spine-loader"></span>Memuat komik selanjutnya…</div>`;
+  } else if(!pState.hasMore){
+    box.innerHTML = `<div class="empty" style="padding:15px; font-size:12px; color:var(--text-muted);">Semua komik telah ditampilkan.</div>`;
+  } else {
+    box.innerHTML = `<button class="load-more-btn" onclick="loadNextPage()">Muat Lebih Banyak</button>`;
+  }
+}
+
+/* Auto Fetch Page Saat User Men-scroll ke Bawah */
+let isScrollThrottled = false;
+window.addEventListener('scroll', () => {
+  if (isScrollThrottled) return;
+  isScrollThrottled = true;
+  window.requestAnimationFrame(() => {
+    if (!pState.loading && pState.hasMore && document.getElementById('view-discover').classList.contains('active')) {
+      const scrollPos = window.innerHeight + window.scrollY;
+      const threshold = document.body.offsetHeight - 450;
+      if (scrollPos >= threshold) {
+        loadNextPage();
+      }
+    }
+    isScrollThrottled = false;
+  });
+}, { passive: true });
+
+/* ---------- Detail Overlay ---------- */
+function renderChaptersHTML(chapters){
+  if(!chapters.length) return '<div class="empty">Belum ada chapter.</div>';
+  const list = state.isReverseOrder ? [...chapters].reverse() : chapters;
+  return list.map((ch)=>{
+    const chTitle = ch.title && ch.title.trim() ? ch.title : ch.slug.replace(/-/g,' ');
+    return `<div class="chapter-row" onclick="openReader('${escapeAttr(ch.slug)}')">
+              <span>${escapeHtml(chTitle)}</span>
+              <span class="date">${escapeHtml(ch.date || '')}</span>
+            </div>`;
+  }).join('');
+}
+
+function toggleChapterOrder(){
+  state.isReverseOrder = !state.isReverseOrder;
+  const container = document.getElementById('chapterRowsContainer');
+  const btn = document.getElementById('orderBtn');
+  if(container) container.innerHTML = renderChaptersHTML(state.currentChapters);
+  if(btn) btn.textContent = state.isReverseOrder ? 'Urutan: Terlama' : 'Urutan: Terbaru';
+}
+
+async function openDetail(slug){
+  if(!slug) return;
+  const overlay = document.getElementById('detailOverlay');
+  const body = document.getElementById('detailContent');
+  overlay.classList.add('open');
+  document.getElementById('detailTitleBar').textContent = 'Memuat…';
+  document.getElementById('detailBmBtn').classList.remove('on');
+  body.innerHTML = `<div class="loading"><span class="spine-loader"></span>Memuat detail komik…</div>`;
+  overlay.scrollTop = 0;
+
+  try {
+    const data = await api(EP.detail(slug));
+    const c = data.detail || {};
+    const title = c.title || 'Tanpa Judul';
+    const img = getHighResImage(c.cover);
+    const chapters = Array.isArray(c.chapters) ? c.chapters : [];
+    const genres = Array.isArray(c.genres) ? c.genres : [];
+
+    state.currentChapters = chapters;
+    state.isReverseOrder = false;
+
+    currentComic = { slug, title, cover: img, type: c.type || '' };
+    document.getElementById('detailBmBtn').classList.toggle('on', isBookmarked(slug));
+    document.getElementById('detailTitleBar').textContent = title;
+
+    body.innerHTML = `
+      <div class="detail-hero">
+        <div class="detail-cover ${img ? 'skeleton' : ''}">
+          ${img ? `<img class="lazy-img" data-src="${img}" data-title="${escapeAttr(title)}" decoding="async" loading="lazy">` : `<div class="ph">${escapeHtml(title)}</div>`}
+        </div>
+        <div class="detail-info">
+          <h1>${escapeHtml(title)}</h1>
+          <div class="detail-meta">
+            ${c.type ? `<span class="meta-pill">${escapeHtml(c.type)}</span>` : ''}
+            ${c.status ? `<span class="meta-pill">${escapeHtml(c.status)}</span>` : ''}
+            ${c.rating ? `<span class="meta-pill">★ ${escapeHtml(String(c.rating))}</span>` : ''}
+            ${c.author ? `<span class="meta-pill">✍️ ${escapeHtml(c.author)}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="synopsis">${escapeHtml(c.synopsis || 'Sinopsis tidak tersedia.')}</div>
+      ${genres.length ? `<div class="genre-tags">${genres.map(g=>`<span>${escapeHtml(g.title || g)}</span>`).join('')}</div>` : ''}
+      <div class="chapter-list">
+        <div class="chapter-header">
+          <h2>Daftar Chapter (${chapters.length})</h2>
+          <button class="chapter-order-btn" id="orderBtn" onclick="toggleChapterOrder()">Urutan: Terbaru</button>
+        </div>
+        <div id="chapterRowsContainer">${renderChaptersHTML(chapters)}</div>
+      </div>
+      <footer class="app-footer">
+        CyroMedia &copy; 2026 &bull; Developed by <span>AkiraX</span>
+      </footer>
+    `;
+    wireLazyImages(body);
+  } catch(err) {
+    body.innerHTML = `<div class="error">Gagal memuat detail.<br>${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function closeDetail(){ document.getElementById('detailOverlay').classList.remove('open'); }
+
+/* ---------- Reader Overlay ---------- */
+async function openReader(slug){
+  if(!slug) return;
+  const overlay = document.getElementById('readerOverlay');
+  const pages = document.getElementById('readerPages');
+  overlay.classList.add('open');
+  pages.innerHTML = `<div class="loading"><span class="spine-loader"></span>Memuat halaman chapter…</div>`;
+  overlay.scrollTop = 0;
+  document.getElementById('readProgress').style.width = '0%';
+
+  try {
+    const data = await api(EP.chapter(slug));
+    const images = Array.isArray(data.images) ? data.images : [];
+    state.navigation = data.navigation || {next:null, prev:null};
+    state.currentChapterSlug = slug;
+    document.getElementById('readerTitleBar').textContent = data.title || 'Chapter';
+    
+    pages.innerHTML = images.length
+      ? images.map((src,i) => `<div class="page-slot skeleton"><img class="lazy-img" data-src="${src}" data-title="Halaman ${i+1}" alt="Halaman ${i+1}" decoding="async" loading="lazy"></div>`).join('')
+      : `<div class="empty" style="color:#999;">Halaman tidak ditemukan.</div>`;
+    
+    wireLazyImages(pages);
+    document.getElementById('prevChBtn').disabled = !state.navigation.prev;
+    document.getElementById('nextChBtn').disabled = !state.navigation.next;
+
+    if(currentComic){
+      pushHistory({
+        slug: currentComic.slug,
+        title: currentComic.title,
+        cover: currentComic.cover,
+        chapterSlug: slug,
+        chapterTitle: data.title || slug
+      });
+    }
+  } catch(err) {
+    pages.innerHTML = `<div class="error">Gagal memuat chapter.<br>${escapeHtml(err.message)}</div>`;
+  }
+}
+
+/* Throttled Reader Scroll Progress Indicator */
+let isScrolling = false;
+document.getElementById('readerOverlay').addEventListener('scroll', function() {
+  if (!isScrolling) {
+    window.requestAnimationFrame(() => {
+      const total = this.scrollHeight - this.clientHeight;
+      if (total > 0) {
+        const pct = (this.scrollTop / total) * 100;
+        document.getElementById('readProgress').style.width = pct + '%';
+      }
+      isScrolling = false;
+    });
+    isScrolling = true;
+  }
+}, { passive: true });
+
+function closeReader(){ document.getElementById('readerOverlay').classList.remove('open'); }
+function prevChapter(){ if(state.navigation.prev) openReader(state.navigation.prev); }
+function nextChapter(){ if(state.navigation.next) openReader(state.navigation.next); }
+
+/* ---------- Initializing App ---------- */
+loadTab('latest');
+</script>
+</body>
+</html>
