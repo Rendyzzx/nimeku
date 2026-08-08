@@ -47,7 +47,16 @@
   }
 
   .skeleton {
-    background: #1a1712;
+    background: linear-gradient(100deg, #1a1712 30%, #221e17 50%, #1a1712 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: 140% 0; }
+    100% { background-position: -60% 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton { animation: none; }
   }
 
   main {
@@ -62,8 +71,15 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px 0 14px;
-    border-bottom: 1px solid var(--border-subtle);
+    position: relative;
     margin-bottom: 16px;
+  }
+  .brand-header::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 1px;
+    background: linear-gradient(to right, var(--border-subtle) 0%, rgba(245,158,11,0.18) 50%, var(--border-subtle) 100%);
   }
   .brand-logo {
     display: flex;
@@ -72,17 +88,26 @@
     text-decoration: none;
   }
   .brand-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    padding: 2px;
     background: var(--gold-gradient);
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
-  .brand-icon svg { width: 18px; height: 18px; color: #0e0c0a; }
+  .brand-icon img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    border: 1.5px solid var(--bg-dark);
+  }
   .brand-text {
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 800;
     letter-spacing: -0.3px;
     color: var(--text-main);
@@ -90,23 +115,22 @@
   .brand-text span { color: var(--accent-gold); }
   
   .brand-badge {
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 700;
     color: var(--accent-gold);
     background: var(--accent-gold-soft);
     border: 1px solid var(--border-gold);
-    padding: 3px 9px;
+    padding: 6px 13px;
     border-radius: 20px;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
   }
-  .brand-badge .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent-gold);
-  }
+  .brand-badge:active { background: rgba(245, 158, 11, 0.22); }
+  .brand-badge svg { width: 13px; height: 13px; }
 
   /* ---------- SEARCH BAR ---------- */
   .search-pill {
@@ -302,15 +326,34 @@
     border: 1px solid var(--border-subtle);
     content-visibility: auto;
     contain-intrinsic-size: 0 250px;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
   }
   
   @media (hover: hover) {
     .card:hover {
       border-color: var(--border-gold);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px -8px rgba(0,0,0,0.55);
     }
     .hist-row:hover, .bm-row:hover, .chapter-row:hover {
       border-color: var(--border-gold);
     }
+  }
+
+  .card .type-tag {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    z-index: 3;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    color: #0e0c0a;
+    background: var(--accent-gold);
+    padding: 2.5px 7px;
+    border-radius: 5px;
+    line-height: 1.4;
   }
 
   .card .cover-wrapper {
@@ -744,11 +787,14 @@
   <div class="brand-header">
     <a href="#" class="brand-logo" onclick="showView('discover')">
       <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <img src="https://base44.app/api/apps/6a77846d72880864e8c3d9ba/files/mp/public/6a77846d72880864e8c3d9ba/1b2d51af2_logo.jpg" alt="CyroMedia" width="36" height="36" loading="eager" decoding="async">
       </div>
       <span class="brand-text">Cyro<span>Media</span></span>
     </a>
-    <span class="brand-badge"><span class="dot"></span> ID</span>
+    <a href="#" class="brand-badge" onclick="showView('saya')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      About You
+    </a>
   </div>
 
   <!-- ===== TEMUKAN (DISCOVER) VIEW ===== -->
@@ -902,12 +948,30 @@ let pState = {
   loadedSlugs: new Set()
 };
 
-/* ---------- Pembersih Gambar Ke Resolusi Jernih ---------- */
+/* ---------- Pembersih Gambar Ke Resolusi Jernih (dipakai di halaman detail) ---------- */
 function getHighResImage(url) {
   if (!url) return '';
   let cleanUrl = url.split('?')[0];
   cleanUrl = cleanUrl.replace(/-\d+x\d+(\.(jpg|jpeg|png|webp|gif))/gi, '$1');
   return cleanUrl;
+}
+
+/* ---------- Thumbnail Grid: Naikkan Resolusi Secukupnya (Bukan Full-Res) ----------
+   API balik cover dengan parameter resize=146,208 (Jetpack/Photon CDN) — itu terlalu
+   kecil untuk kartu di grid (apalagi di layar retina/hi-dpi), makanya kelihatan burik.
+   Full-res juga bukan solusi (berat, lambat saat infinite scroll). Jalan tengahnya:
+   minta CDN kirim ukuran ~2.2x lipat lewat parameter resize yang sama — tetap gambar
+   terkompresi ringan dari CDN, cuma resolusinya cukup buat tampil tajam di kartu. */
+function getThumbSrc(url) {
+  if (!url) return '';
+  if (/resize=\d+,\d+/i.test(url)) {
+    return url.replace(/resize=\d+,\d+/i, 'resize=320,455');
+  }
+  // Kalau API kirim tanpa parameter resize, tempel sendiri (masih CDN yang sama: i0/i1/i2.wp.com).
+  if (/\/\/i[0-2]\.wp\.com\//i.test(url)) {
+    return url + (url.includes('?') ? '&' : '?') + 'resize=320,455';
+  }
+  return url;
 }
 
 /* ---------- Toast Notification ---------- */
@@ -936,12 +1000,20 @@ async function api(path){
   }
 }
 
-/* ---------- Pre-fetch Pool Komik Cadangan ---------- */
+/* ---------- Pre-fetch Pool Komik Cadangan ----------
+   Ditarik dari banyak sumber (bukan cuma 4 endpoint) supaya infinite scroll punya
+   cukup banyak komik unik sebelum akhirnya kehabisan. Diacak sekali di akhir biar
+   urutan "Muat Lebih Banyak" tidak terasa aneh/berulang. */
 async function ensureComicsPool() {
   if (allComicsPool.length > 0 || isPoolFetching) return;
   isPoolFetching = true;
   try {
-    const endpoints = [EP.list(), EP.populer(), EP.recomen(), EP.top()];
+    const endpoints = [
+      EP.list(), EP.populer(), EP.recomen(), EP.top(),
+      EP.onlyType('manga'), EP.onlyType('manhwa'), EP.onlyType('manhua'),
+      `${EP.latest()}/page/2`, `${EP.latest()}/page/3`,
+      `${EP.populer()}/page/2`, `${EP.top()}/page/2`,
+    ];
     for (const ep of endpoints) {
       try {
         const data = await api(ep);
@@ -954,6 +1026,11 @@ async function ensureComicsPool() {
           });
         }
       } catch (e) {}
+    }
+    // Kocok pool sekali biar setiap sesi terasa berbeda, bukan urutan tetap yang sama.
+    for (let i = allComicsPool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [allComicsPool[i], allComicsPool[j]] = [allComicsPool[j], allComicsPool[i]];
     }
   } catch(e) {
   } finally {
@@ -1138,13 +1215,14 @@ function openWhatsApp(){
 /* ---------- Comic Card Component ---------- */
 function comicCardHTML(c){
   const title = c.title || 'Tanpa Judul';
-  // Thumbnail grid dibiarkan di resolusi kecil bawaan API (jangan getHighResImage di sini).
+  // Thumbnail grid dinaikkan sedikit resolusinya lewat getThumbSrc (bukan full-res).
   // Memaksa semua kartu ke gambar full-res adalah penyebab utama scroll berat:
   // puluhan/ratusan gambar besar harus di-decode sekaligus saat infinite scroll.
-  const img = c.cover || '';
+  const img = getThumbSrc(c.cover || '');
   const rating = c.rating || '8.0';
   const chapter = c.chapter || c.views || '';
   const slug = c.slug || '';
+  const type = (c.type || '').trim();
 
   const imgContent = img
     ? `<img class="lazy-img" data-src="${img}" data-title="${escapeAttr(title)}" alt="" decoding="async" loading="lazy">`
@@ -1153,6 +1231,7 @@ function comicCardHTML(c){
   return `
     <div class="card" onclick="openDetail('${escapeAttr(slug)}')">
       <div class="cover-wrapper ${img ? 'skeleton' : ''}">${imgContent}</div>
+      ${type ? `<span class="type-tag">${escapeHtml(type)}</span>` : ''}
       <div class="card-overlay">
         <div class="title">${escapeHtml(title)}</div>
         <div class="meta-line">
