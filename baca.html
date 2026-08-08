@@ -867,20 +867,21 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// Semua request sekarang lewat backend sendiri di /api/* (lihat api/[...path].js).
-// Alamat API asli & proxy CORS publik sudah TIDAK dipakai lagi di sisi frontend.
+// Semua request lewat backend sendiri di /api/manga/* (lihat api/manga/[...path].js).
+// Ditaruh di bawah /api/manga/ (bukan langsung /api/) supaya tidak "ditelan"
+// oleh rewrite /api/:path* -> domain anime yang sudah ada di vercel.json.
 const EP = {
-  list:      () => `/api/list`,
-  search:    (q) => `/api/search/${encodeURIComponent(q)}`,
-  genres:    () => `/api/genres`,
-  byGenre:   (g) => `/api/genre/${encodeURIComponent(g)}`,
-  detail:    (slug) => `/api/detail/${slug}`,
-  chapter:   (slug) => `/api/chapter/${slug}`,
-  recomen:   () => `/api/recomen`,
-  latest:    () => `/api/latest`,
-  populer:   () => `/api/populer`,
-  onlyType:  (t) => `/api/only/${t}`,
-  top:       () => `/api/top`,
+  list:      () => `/api/manga/list`,
+  search:    (q) => `/api/manga/search/${encodeURIComponent(q)}`,
+  genres:    () => `/api/manga/genres`,
+  byGenre:   (g) => `/api/manga/genre/${encodeURIComponent(g)}`,
+  detail:    (slug) => `/api/manga/detail/${slug}`,
+  chapter:   (slug) => `/api/manga/chapter/${slug}`,
+  recomen:   () => `/api/manga/recomen`,
+  latest:    () => `/api/manga/latest`,
+  populer:   () => `/api/manga/populer`,
+  onlyType:  (t) => `/api/manga/only/${t}`,
+  top:       () => `/api/manga/top`,
 };
 
 let state = { navigation:{next:null,prev:null}, currentChapterSlug:null, isReverseOrder: false, currentChapters: [] };
