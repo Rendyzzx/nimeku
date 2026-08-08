@@ -38,29 +38,57 @@
             background-color: var(--color-bg);
             color: #FFFFFF;
             position: relative;
+            overflow-x: hidden;
         }
 
+        /* === STATIC GRID BACKGROUND (no animation for perf) === */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
             background-image:
-                linear-gradient(rgba(0, 230, 118, 0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 208, 40, 0.015) 1px, transparent 1px);
-            background-size: 40px 40px, 40px 40px;
+                linear-gradient(rgba(214, 167, 85, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(92, 138, 166, 0.025) 1px, transparent 1px);
+            background-size: 44px 44px, 44px 44px;
             pointer-events: none;
             z-index: 0;
-            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+            mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 75%);
         }
 
+        /* === STATIC GRADIENT ORBS (no animation for perf) === */
         body::after {
             content: '';
             position: fixed;
             inset: 0;
-            background: radial-gradient(ellipse at center top, rgba(0, 230, 118, 0.04), transparent 60%),
-                        radial-gradient(ellipse at center bottom, rgba(255, 208, 40, 0.03), transparent 50%);
+            background:
+                radial-gradient(ellipse 400px 300px at 15% 20%, rgba(214, 167, 85, 0.07), transparent 70%),
+                radial-gradient(ellipse 350px 280px at 85% 60%, rgba(92, 138, 166, 0.06), transparent 70%),
+                radial-gradient(ellipse 300px 250px at 50% 95%, rgba(214, 167, 85, 0.04), transparent 70%);
             pointer-events: none;
             z-index: 0;
+        }
+
+        /* === REDUCED DUST PARTICLES (4 instead of 8) === */
+        .dust {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+        .dust-1 { width:4px; height:4px; left:12%; top:80%; background:rgba(214,167,85,0.5); animation:dustRise 14s ease-in infinite; animation-delay:0s; }
+        .dust-2 { width:3px; height:3px; left:78%; top:85%; background:rgba(92,138,166,0.4); animation:dustRise 16s ease-in infinite; animation-delay:3s; }
+        .dust-3 { width:4px; height:4px; left:45%; top:92%; background:rgba(214,167,85,0.4); animation:dustRise 15s ease-in infinite; animation-delay:6s; }
+        .dust-4 { width:3px; height:3px; left:65%; top:75%; background:rgba(92,138,166,0.3); animation:dustRise 13s ease-in infinite; animation-delay:9s; }
+
+        @keyframes dustRise {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            50% { transform: translateY(-40vh) translateX(8px); opacity: 0.4; }
+            90% { opacity: 0.1; }
+            100% { transform: translateY(-80vh) translateX(-4px); opacity: 0; }
         }
 
         .font-heading { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
@@ -78,8 +106,8 @@
         @keyframes pulseGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         .pulse-live { animation: pulseGlow 1.5s ease-in-out infinite; }
 
-        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
-        .fade-up { animation: fadeUp 0.4s ease both; }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(14px) scale(0.98); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        .fade-up { animation: fadeUp 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 
         @keyframes contentFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         main { animation: contentFadeIn 0.5s ease-out; }
@@ -89,31 +117,440 @@
 
         .bg-darkcard { background-image: linear-gradient(180deg, rgba(255,255,255,0.012) 0%, rgba(0,0,0,0.018) 100%); }
 
-        input:focus, textarea:focus { box-shadow: 0 0 0 1px rgba(0, 230, 118, 0.25), 0 0 12px -2px rgba(0, 230, 118, 0.15); }
+        input:focus, textarea:focus { box-shadow: 0 0 0 1px rgba(214, 167, 85, 0.25), 0 0 12px -2px rgba(214, 167, 85, 0.15); }
 
+        /* === GRAIN (simplified - no mix-blend-mode for perf) === */
         .grain {
             position: fixed; inset: 0; pointer-events: none; z-index: 9999;
-            opacity: 0.035; mix-blend-mode: overlay;
+            opacity: 0.025;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
-        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #0F1015; }
-        ::-webkit-scrollbar-thumb { background: #1a2e23; border-radius: 6px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--color-primary), var(--color-accent)); border-radius: 6px; }
         ::selection { background: var(--color-primary); color: #000; }
 
         .nb-spinner {
             width: 42px; height: 42px;
-            border: 4px solid #181A22; border-top-color: var(--color-accent);
+            border: 4px solid #181A22; border-top-color: var(--color-primary);
+            border-right-color: var(--color-accent);
             border-radius: 50%; animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         p, span, label { letter-spacing: -0.003em; }
+
+        /* ================= HERO CHARACTER SHOWCASE ================= */
+        #hero-flex {
+            width: 100%;
+            max-width: 36rem;
+            margin: 0 auto 0.25rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        #hero-flex #char-showcase { order: 1; }
+        #hero-flex #site-header { order: 2; margin-top: 0; margin-bottom: 0; }
+
+        #char-showcase {
+            width: 100%;
+            min-height: 230px;
+            padding: 1.25rem 0 0;
+            position: relative;
+            /* Gradient fade at bottom so character doesn't look cut off */
+            -webkit-mask-image: linear-gradient(to bottom, black 82%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 82%, transparent 100%);
+        }
+
+        .char-frame {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 190px;
+        }
+
+        .char-img {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.55));
+            animation: floatChar 6s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .char-glow {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 150%; height: 150%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(214,167,85,0.35) 0%, rgba(92,138,166,0.16) 55%, transparent 78%);
+            filter: blur(18px);
+            border-radius: 50%;
+            z-index: 1;
+            animation: glowPulse 4.5s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+
+        .char-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 128%; height: 128%;
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(214,167,85,0.26);
+            border-radius: 50%;
+            z-index: 2;
+            animation: ringSpin 26s linear infinite;
+            will-change: transform;
+        }
+
+        .char-ring-2 {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 145%; height: 145%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(92,138,166,0.12);
+            border-radius: 50%;
+            z-index: 2;
+            animation: ringSpin 40s linear infinite reverse;
+            will-change: transform;
+        }
+
+        .petal {
+            position: absolute;
+            width: 9px; height: 9px;
+            background: rgba(255,178,193,0.8);
+            border-radius: 50% 0 50% 50%;
+            transform: rotate(45deg);
+            z-index: 6;
+            opacity: 0;
+            animation: petalFloat 7.5s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+
+        .char-pop {
+            position: absolute;
+            top: 2%;
+            right: -10%;
+            z-index: 20;
+            background: var(--color-primary);
+            color: #0B0C10;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 800;
+            font-size: 0.78rem;
+            letter-spacing: -0.02em;
+            padding: 0.32rem 0.7rem;
+            border: 2px solid #000000;
+            border-radius: 0.55rem;
+            box-shadow: 3px 3px 0px 0px #000000;
+            transform: rotate(-4deg);
+            white-space: nowrap;
+            opacity: 0;
+            animation: charBrandPop 6s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+
+        @keyframes floatChar {
+            0%, 100% { transform: translateY(0px) rotate(-1deg); }
+            50% { transform: translateY(-14px) rotate(1deg); }
+        }
+        @keyframes glowPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(0.94); opacity: 0.55; }
+            50% { transform: translate(-50%, -50%) scale(1.06); opacity: 0.9; }
+        }
+        @keyframes ringSpin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes petalFloat {
+            0% { transform: translate(0, 0) rotate(15deg) scale(0.6); opacity: 0; }
+            15% { opacity: 0.85; }
+            50% { transform: translate(12px, -42px) rotate(190deg) scale(1); opacity: 0.7; }
+            85% { opacity: 0.15; }
+            100% { transform: translate(-8px, -90px) rotate(370deg) scale(0.5); opacity: 0; }
+        }
+        @keyframes charBrandPop {
+            0%, 100% { opacity: 0; transform: translateY(8px) rotate(-4deg) scale(0.85); }
+            10%, 32% { opacity: 1; transform: translateY(0) rotate(-4deg) scale(1); }
+            45% { opacity: 0; transform: translateY(-6px) rotate(-4deg) scale(0.9); }
+        }
+
+        /* ================= BRAND NAME ANIMATED GRADIENT ================= */
+        #brand-name-text {
+            background: linear-gradient(90deg, #ffffff 0%, var(--color-primary) 50%, #ffffff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 5s linear infinite;
+        }
+
+        @keyframes textShimmer {
+            from { background-position: 200% center; }
+            to { background-position: 0% center; }
+        }
+
+        /* ================= HERO BANNER SHEEN + GLOW ================= */
+        #hero-banner {
+            position: relative;
+        }
+        #hero-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 40%, rgba(214,167,85,0.06) 50%, transparent 60%);
+            animation: bannerSheen 6s ease-in-out infinite;
+            pointer-events: none;
+            will-change: transform;
+        }
+        #hero-banner::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, var(--color-primary), transparent, var(--color-accent));
+            opacity: 0;
+            z-index: -1;
+            animation: bannerBorderGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes bannerSheen {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+        @keyframes bannerBorderGlow {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.3; }
+        }
+
+        /* ================= BANNER ANIMATIONS ================= */
+        @keyframes bannerSlideIn {
+            0% { opacity: 0; transform: translateY(-20px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes bannerShake {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(-0.6deg); }
+            75% { transform: rotate(0.6deg); }
+        }
+        @keyframes promoShine {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+
+        #site-warning-banner:not(.hidden) {
+            animation: bannerSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), bannerShake 0.5s ease-in-out 0.6s;
+        }
+        #site-promo-banner:not(.hidden) {
+            background-image: linear-gradient(90deg, var(--color-primary) 0%, #f0d090 50%, var(--color-primary) 100%);
+            background-size: 200% auto;
+            animation: bannerSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), promoShine 3s linear infinite 0.5s;
+        }
+        #site-promo-banner .promo-emoji {
+            animation: promoBounce 1.5s ease-in-out infinite;
+            display: inline-block;
+        }
+        @keyframes promoBounce {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-5px) rotate(8deg); }
+        }
+
+        /* ================= SECTION TITLE ANIMATION ================= */
+        .section-title-wrap {
+            position: relative;
+        }
+        .section-title-wrap::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-primary), transparent);
+            animation: titleUnderline 1.5s ease-out 0.5s forwards;
+        }
+        @keyframes titleUnderline {
+            to { width: 100%; }
+        }
+        .section-icon-rotate {
+            animation: iconWobble 4s ease-in-out infinite;
+            will-change: transform;
+        }
+        @keyframes iconWobble {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        /* ================= SERVICE CARD ENHANCEMENTS ================= */
+        #services-grid > div {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+            position: relative;
+        }
+        #services-grid > div::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, transparent 30%, rgba(214,167,85,0.04) 50%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        #services-grid > div:hover::before {
+            opacity: 1;
+        }
+        #services-grid > div:hover {
+            border-color: rgba(214,167,85,0.4);
+        }
+        #services-grid > div .svc-icon {
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #services-grid > div:hover .svc-icon {
+            transform: scale(1.12) rotate(-4deg);
+        }
+        #services-grid > div .svc-arrow {
+            transition: transform 0.2s ease;
+        }
+        #services-grid > div:hover .svc-arrow {
+            transform: translateX(4px);
+        }
+
+        /* Card shimmer on hover */
+        #services-grid > div::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transition: left 0.6s ease;
+            pointer-events: none;
+            border-radius: 1rem;
+        }
+        #services-grid > div:hover::after {
+            left: 120%;
+        }
+
+        /* ================= WHATSAPP CARD ANIMATION ================= */
+        .wa-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .wa-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(37,211,102,0.06) 90deg, transparent 180deg);
+            animation: waCardSpin 6s linear infinite;
+            pointer-events: none;
+            will-change: transform;
+        }
+        @keyframes waCardSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .wa-icon-pulse {
+            animation: waPulse 2.5s ease-in-out infinite;
+            will-change: transform;
+        }
+        @keyframes waPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+
+        /* ================= FOOTER ANIMATION ================= */
+        .footer-badge {
+            position: relative;
+            overflow: hidden;
+        }
+        .footer-badge::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(214,167,85,0.1), transparent);
+            animation: footerShine 4s ease-in-out infinite;
+        }
+        @keyframes footerShine {
+            0%, 100% { left: -100%; }
+            50% { left: 200%; }
+        }
+
+        .social-link-anim {
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+        }
+        .social-link-anim:hover {
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        /* ================= SCROLL REVEAL ================= */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ================= LOADING STATE ANIMATION ================= */
+        #loading-state p {
+            animation: loadingDots 1.5s ease-in-out infinite;
+        }
+        @keyframes loadingDots {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* ================= DESKTOP LAYOUT ================= */
+        @media (min-width: 640px) {
+            .char-frame { width: 230px; }
+        }
+        @media (min-width: 1024px) {
+            .char-frame { width: 280px; }
+            #char-showcase { min-height: 300px; }
+            #hero-flex {
+                max-width: 56rem;
+                flex-direction: row;
+                align-items: center;
+                gap: 2.5rem;
+                margin-bottom: 1rem;
+            }
+            #hero-flex #char-showcase { order: 2; flex: 0 0 40%; }
+            #hero-flex #site-header { order: 1; flex: 1 1 60%; text-align: left; }
+            #site-main, #site-footer, #site-warning-banner, #site-promo-banner { max-width: 56rem; }
+            #hero-banner { height: 12rem; }
+        }
+
+        /* Respect reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .char-img, .char-glow, .char-ring, .char-ring-2, .petal, .char-pop, .fade-up, main,
+            body::before, body::after, .dust, #brand-name-text, #hero-banner::after, #hero-banner::before,
+            #site-warning-banner, #site-promo-banner, .section-icon-rotate, .wa-card::before,
+            .wa-icon-pulse, .footer-badge::after, .promo-emoji {
+                animation: none !important;
+                opacity: 1 !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen text-white flex flex-col items-center p-4 sm:p-6 relative">
     <div class="grain"></div>
+    <div class="dust dust-1"></div>
+    <div class="dust dust-2"></div>
+    <div class="dust dust-3"></div>
+    <div class="dust dust-4"></div>
 
     <!-- MAINTENANCE OVERLAY -->
     <div id="maintenance-overlay" class="fixed inset-0 bg-darkbg z-[200] hidden flex-col items-center justify-center p-6 text-center">
@@ -133,27 +570,44 @@
     </div>
 
     <!-- PROMO BANNER -->
-    <div id="site-promo-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 bg-cyberYellow text-black border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-center gap-2">
-        <span class="text-lg leading-none">🎉</span>
+    <div id="site-promo-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 text-black border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-center gap-2">
+        <span class="text-lg leading-none promo-emoji">🎉</span>
         <span id="site-promo-text" class="flex-1"></span>
     </div>
 
-    <!-- HEADER -->
-    <header class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-3 mb-4 relative z-10 text-center">
-        <h1 id="brand-name-text" class="font-brand font-extrabold text-3xl sm:text-4xl tracking-wide text-white mb-2.5" style="text-shadow: 0 2px 12px rgba(0,0,0,0.35);">Cyronime</h1>
-        <div id="hero-banner" class="relative w-full h-36 sm:h-40 rounded-2xl border-2.5 border-black overflow-hidden nb-shadow mb-2.5 bg-darkcard"
-             style="background-image: linear-gradient(180deg, rgba(11,12,16,0.08) 0%, rgba(11,12,16,0.35) 70%, rgba(11,12,16,0.7) 100%), url('https://media.base44.com/images/public/6a75321993e2d284381461e5/94f4b83b5_b81c678da1a7a24ed74c9752c1201fa4.jpg'); background-size: cover; background-position: center 12%;">
-            <span id="brand-badge-text" class="hidden"></span>
+    <!-- HERO: BRAND + ANIMATED CHARACTER -->
+    <div id="hero-flex" class="fade-up">
+        <div id="char-showcase" class="relative z-10 flex items-center justify-center fade-up" style="animation-delay:.15s;" aria-hidden="true">
+            <div class="char-frame">
+                <div class="char-glow"></div>
+                <div class="char-ring"></div>
+                <div class="char-ring-2"></div>
+                <span class="petal" style="left:-8%; top:60%; animation-delay:0s;"></span>
+                <span class="petal" style="left:104%; top:55%; animation-delay:1.8s;"></span>
+                <span class="petal" style="left:14%; top:6%; animation-delay:3.4s;"></span>
+                <span class="petal" style="left:86%; top:2%; animation-delay:5s;"></span>
+                <span class="petal" style="left:48%; top:100%; animation-delay:2.4s;"></span>
+                <img class="char-img" src="https://media.base44.com/images/public/6a77ad2205db43e526eff344/027257fef_e8a1c11c3ef06107610b7112df0ebda5-removebg.png" alt="Cyronime mascot" width="615" height="1024" loading="eager" decoding="async">
+                <span id="char-brand-text" class="char-pop">Cyronime</span>
+            </div>
         </div>
-        <p id="brand-tagline-text" class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Pilih Layanan</p>
-    </header>
+
+        <header id="site-header" class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-3 mb-4 relative z-10 text-center">
+            <h1 id="brand-name-text" class="font-brand font-extrabold text-3xl sm:text-4xl tracking-wide text-white mb-2.5" style="text-shadow: 0 2px 12px rgba(0,0,0,0.35);">Cyronime</h1>
+            <div id="hero-banner" class="relative w-full h-36 sm:h-40 rounded-2xl border-2.5 border-black overflow-hidden nb-shadow mb-2.5 bg-darkcard"
+                 style="background-image: linear-gradient(180deg, rgba(11,12,16,0.08) 0%, rgba(11,12,16,0.35) 70%, rgba(11,12,16,0.7) 100%), url('https://media.base44.com/images/public/6a75321993e2d284381461e5/94f4b83b5_b81c678da1a7a24ed74c9752c1201fa4.jpg'); background-size: cover; background-position: center 12%;">
+                <span id="brand-badge-text" class="hidden"></span>
+            </div>
+            <p id="brand-tagline-text" class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Pilih Layanan</p>
+        </header>
+    </div>
 
     <!-- MAIN: SERVICE LIST -->
-    <main class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-1 space-y-4 z-10">
+    <main id="site-main" class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-1 space-y-4 z-10">
 
         <!-- SECTION TITLE -->
-        <div class="flex items-center gap-2.5 mb-1">
-            <div class="w-7 h-7 bg-cyberYellow border-2 border-black rounded-lg flex items-center justify-center text-black text-xs nb-shadow-sm">
+        <div class="section-title-wrap flex items-center gap-2.5 mb-1 reveal">
+            <div class="section-icon-rotate w-7 h-7 bg-cyberYellow border-2 border-black rounded-lg flex items-center justify-center text-black text-xs nb-shadow-sm">
                 <i class="fas fa-th-large text-[10px]"></i>
             </div>
             <h2 class="font-heading font-extrabold text-sm text-white uppercase tracking-wider">Daftar Layanan</h2>
@@ -183,9 +637,9 @@
         </div>
 
         <!-- WHATSAPP CONTACT -->
-        <div class="bg-darkcard border-2.5 border-black rounded-2xl p-4 nb-shadow flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-waGreen border-2 border-black rounded-xl flex items-center justify-center text-black text-xl font-bold">
+        <div class="wa-card reveal bg-darkcard border-2.5 border-black rounded-2xl p-4 nb-shadow flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
+            <div class="flex items-center gap-3 relative z-10">
+                <div class="wa-icon-pulse w-10 h-10 bg-waGreen border-2 border-black rounded-xl flex items-center justify-center text-black text-xl font-bold">
                     <i class="fab fa-whatsapp"></i>
                 </div>
                 <div>
@@ -194,15 +648,15 @@
                 </div>
             </div>
             <a id="wa-link" href="https://wa.me/6281249578370?text=Halo%20Akirax,%20saya%20butuh%20bantuan" target="_blank" rel="noopener noreferrer"
-               class="w-full sm:w-auto px-4 py-2.5 bg-waGreen hover:bg-emerald-500 text-black font-extrabold rounded-xl border-2 border-black text-xs nb-shadow-button flex items-center justify-center gap-2">
+               class="relative z-10 w-full sm:w-auto px-4 py-2.5 bg-waGreen hover:bg-emerald-500 text-black font-extrabold rounded-xl border-2 border-black text-xs nb-shadow-button flex items-center justify-center gap-2">
                 <i class="fab fa-whatsapp text-sm"></i><span>CHAT WHATSAPP</span>
             </a>
         </div>
     </main>
 
     <!-- FOOTER -->
-    <footer class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-6 mb-2 text-center text-xs font-bold text-slate-400 space-y-2.5 relative z-10">
-        <div class="inline-flex items-center gap-2 bg-darkcard text-slate-300 border-2 border-black px-3.5 py-1.5 rounded-xl font-bold text-[11px] nb-shadow-sm uppercase tracking-wider">
+    <footer id="site-footer" class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-6 mb-2 text-center text-xs font-bold text-slate-400 space-y-2.5 relative z-10">
+        <div class="footer-badge inline-flex items-center gap-2 bg-darkcard text-slate-300 border-2 border-black px-3.5 py-1.5 rounded-xl font-bold text-[11px] nb-shadow-sm uppercase tracking-wider">
             <span id="footer-credit-text">Copyright by <strong class="font-heading text-cyberYellow">Akirax</strong></span>
         </div>
         <div id="site-social-links" class="hidden items-center justify-center gap-2"></div>
@@ -233,6 +687,18 @@
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // ---- Scroll Reveal Observer ----
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -30px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
         // ---- Fetch & render services ----
         async function loadServices() {
@@ -266,13 +732,15 @@
         }
 
         function renderServices(services) {
-            const grid = document.getElementById('services-grid');
             const loading = document.getElementById('loading-state');
+            const error = document.getElementById('error-state');
+            const grid = document.getElementById('services-grid');
             const empty = document.getElementById('empty-state');
 
             loading.classList.add('hidden');
+            error.classList.add('hidden');
 
-            if (!services || services.length === 0) {
+            if (!services.length) {
                 empty.classList.remove('hidden');
                 return;
             }
@@ -289,7 +757,7 @@
 
                 const card = document.createElement('div');
                 card.className = `fade-up bg-darkcard border-2.5 border-black rounded-2xl p-4 nb-shadow relative overflow-hidden ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0px_0px_#000000] transition-all'}`;
-                card.style.animationDelay = `${i * 0.06}s`;
+                card.style.animationDelay = `${i * 0.08}s`;
 
                 if (isLocked) {
                     card.onclick = () => showLockModal(svc.lockMessage || 'Layanan ini sedang dikunci sementara.');
@@ -316,14 +784,14 @@
                 card.innerHTML = `
                     ${lockBadge}
                     ${extBadge}
-                    <div class="flex items-start gap-3">
-                        <div class="flex-shrink-0 w-12 h-12 border-2 border-black rounded-xl flex items-center justify-center text-lg nb-shadow-sm overflow-hidden" style="background-color: ${isImageIcon ? 'transparent' : color + '22'}; color: ${color};">
+                    <div class="flex items-start gap-3 relative z-10">
+                        <div class="svc-icon flex-shrink-0 w-12 h-12 border-2 border-black rounded-xl flex items-center justify-center text-lg nb-shadow-sm overflow-hidden" style="background-color: ${isImageIcon ? 'transparent' : color + '22'}; color: ${color};">
                             ${isImageIcon ? `<img src="${icon}" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover" alt="">` : `<i class="fas ${icon}"></i>`}
                         </div>
                         <div class="flex-1 min-w-0">
                             <h3 class="font-heading font-extrabold text-sm text-white truncate">${escapeHtml(svc.name)}</h3>
                             ${svc.description ? `<p class="text-[11px] text-slate-400 font-medium mt-0.5 line-clamp-2 leading-snug">${escapeHtml(svc.description)}</p>` : ''}
-                            ${!isLocked ? `<div class="mt-2 flex items-center gap-1 text-[10px] font-bold" style="color: ${color};"><span>Buka Layanan</span><i class="fas fa-arrow-right text-[9px]"></i></div>` : ''}
+                            ${!isLocked ? `<div class="mt-2 flex items-center gap-1 text-[10px] font-bold" style="color: ${color};"><span>Buka Layanan</span><i class="fas fa-arrow-right text-[9px] svc-arrow"></i></div>` : ''}
                         </div>
                     </div>
                 `;
@@ -338,7 +806,7 @@
             if (msgEl && msg) msgEl.textContent = msg;
             overlay.classList.remove('hidden');
             overlay.classList.add('flex');
-            document.querySelectorAll('header, main, footer').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('header, main, footer, #hero-flex').forEach(el => el.style.display = 'none');
         }
 
         function applySiteConfig(site, warning) {
@@ -347,14 +815,14 @@
             if (site.accentColor) root.style.setProperty('--color-accent', site.accentColor);
             if (site.bgColor) root.style.setProperty('--color-bg', site.bgColor);
 
-            if (site.brandName) document.getElementById('brand-name-text').textContent = site.brandName;
+            if (site.brandName) { document.getElementById('brand-name-text').textContent = site.brandName; const cbt = document.getElementById('char-brand-text'); if (cbt) cbt.textContent = site.brandName; }
             if (site.brandBadge) document.getElementById('brand-badge-text').textContent = site.brandBadge;
             if (site.tagline) document.getElementById('brand-tagline-text').textContent = site.tagline;
             if (site.footerText) document.getElementById('footer-credit-text').innerHTML = site.footerText;
             if (site.pageTitle) document.title = site.pageTitle;
             if (site.faviconUrl) document.getElementById('favicon-link').setAttribute('href', site.faviconUrl);
 
-            // Background header (hero banner) — logo/badge sudah dihapus, brand cuma teks di atas foto
+            // Background header (hero banner)
             if (site.heroImage) {
                 const hero = document.getElementById('hero-banner');
                 if (hero) hero.style.backgroundImage = `linear-gradient(180deg, rgba(11,12,16,0.08) 0%, rgba(11,12,16,0.35) 70%, rgba(11,12,16,0.7) 100%), url('${site.heroImage}')`;
@@ -394,7 +862,7 @@
                 const icons = { instagram: 'fa-instagram', tiktok: 'fa-tiktok', youtube: 'fa-youtube', facebook: 'fa-facebook', twitter: 'fa-x-twitter', x: 'fa-x-twitter', telegram: 'fa-telegram', whatsapp: 'fa-whatsapp', github: 'fa-github' };
                 wrap.innerHTML = Object.entries(site.social).map(([platform, url]) => {
                     const icon = icons[platform.toLowerCase()] || 'fa-link';
-                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="w-8 h-8 flex items-center justify-center bg-darkcard border-2 border-black rounded-lg text-slate-300 hover:text-cyberYellow nb-shadow-sm text-xs"><i class="fab ${icon}"></i></a>`;
+                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="social-link-anim w-8 h-8 flex items-center justify-center bg-darkcard border-2 border-black rounded-lg text-slate-300 hover:text-cyberYellow nb-shadow-sm text-xs"><i class="fab ${icon}"></i></a>`;
                 }).join('');
                 wrap.classList.remove('hidden');
                 wrap.classList.add('flex');
