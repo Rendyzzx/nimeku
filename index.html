@@ -8,35 +8,23 @@
     <title id="page-title">Cyronime — Portal Layanan Premium</title>
     <link rel="icon" id="favicon-link" href="data:,">
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: 'var(--color-bg)',
-                        darkcard: '#181A22',
-                        neonGreen: 'var(--color-accent)',
-                        cyberYellow: 'var(--color-primary)',
-                        waGreen: '#25D366'
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        heading: ['Space Grotesk', 'sans-serif'],
-                        brand: ['Outfit', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <!-- Preconnects -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+    <!-- Preload LCP hero image so it's discovered immediately -->
+    <link rel="preload" as="image" fetchpriority="high" href="https://media.base44.com/images/public/6a75321993e2d284381461e5/94f4b83b5_b81c678da1a7a24ed74c9752c1201fa4.jpg">
+
+    <!-- Prebuilt, purged Tailwind CSS (replaces the heavy cdn.tailwindcss.com runtime compiler) -->
+    <link rel="stylesheet" href="/assets/css/app.css">
+
+    <!-- Google Fonts (already uses font-display: swap) -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome loaded non-blocking (preload + swap to stylesheet on load) -->
+    <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
     <style>
         :root {
@@ -130,7 +118,7 @@
     <!-- MAINTENANCE OVERLAY -->
     <div id="maintenance-overlay" class="fixed inset-0 bg-darkbg z-[200] hidden flex-col items-center justify-center p-6 text-center">
         <div class="relative w-20 h-20 mx-auto mb-5">
-            <img src="https://base44.app/api/apps/6a75119d8897b55540d7e5b4/files/mp/public/6a75119d8897b55540d7e5b4/e49d002b0_f3ee9cabd_36dcd09f2f8593db6fc7e1c52e3e0506.jpg" alt="Admin" class="w-20 h-20 rounded-full object-cover border-2 border-black nb-shadow">
+            <img src="https://base44.app/api/apps/6a75119d8897b55540d7e5b4/files/mp/public/6a75119d8897b55540d7e5b4/e49d002b0_f3ee9cabd_36dcd09f2f8593db6fc7e1c52e3e0506.jpg" alt="Admin" width="80" height="80" loading="lazy" decoding="async" class="w-20 h-20 rounded-full object-cover border-2 border-black nb-shadow">
             <span class="absolute -bottom-1 -right-1 w-7 h-7 bg-cyberYellow border-2 border-black rounded-full flex items-center justify-center text-xs">🛠️</span>
         </div>
         <h2 class="font-heading font-extrabold text-xl text-white tracking-tight mb-2">Bentar ya, lagi dibenerin</h2>
@@ -250,11 +238,11 @@
         async function loadServices() {
             try {
                 const [statusRes, servicesRes] = await Promise.all([
-                    axios.get('/api/status'),
-                    axios.get('/api/services')
+                    fetch('/api/status').then(r => r.json()),
+                    fetch('/api/services').then(r => r.json())
                 ]);
 
-                const status = statusRes.data || {};
+                const status = statusRes || {};
                 const warning = status.warning || {};
                 const site = status.site || {};
 
@@ -268,7 +256,7 @@
                 applySiteConfig(site, warning);
 
                 // Render services
-                const services = (servicesRes.data && servicesRes.data.services) || [];
+                const services = (servicesRes && servicesRes.services) || [];
                 renderServices(services);
             } catch (e) {
                 console.error('Load error:', e);
@@ -330,7 +318,7 @@
                     ${extBadge}
                     <div class="flex items-start gap-3">
                         <div class="flex-shrink-0 w-12 h-12 border-2 border-black rounded-xl flex items-center justify-center text-lg nb-shadow-sm overflow-hidden" style="background-color: ${isImageIcon ? 'transparent' : color + '22'}; color: ${color};">
-                            ${isImageIcon ? `<img src="${icon}" class="w-full h-full object-cover" alt="">` : `<i class="fas ${icon}"></i>`}
+                            ${isImageIcon ? `<img src="${icon}" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover" alt="">` : `<i class="fas ${icon}"></i>`}
                         </div>
                         <div class="flex-1 min-w-0">
                             <h3 class="font-heading font-extrabold text-sm text-white truncate">${escapeHtml(svc.name)}</h3>
