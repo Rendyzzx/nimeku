@@ -2107,14 +2107,16 @@
                 // Terapkan konfigurasi tampilan/konten website
                 applySiteConfig(site);
 
-                // Auto-poll: kalau sedang maintenance, cek tiap 30s. Kalau sudah normal → reload otomatis
-                if (!window.__maintenancePolling) {
+                // Auto-poll: HANYA saat maintenance aktif, cek tiap 30s.
+                // Kalau maintenance sudah selesai → reload otomatis.
+                if (warning && warning.maintenance && !window.__maintenancePolling) {
                     window.__maintenancePolling = setInterval(async function() {
                         try {
                             var r = await axios.get('/api/status');
                             var w = r.data && r.data.warning;
                             if (!w || !w.maintenance) {
                                 clearInterval(window.__maintenancePolling);
+                                window.__maintenancePolling = null;
                                 location.reload();
                             }
                         } catch(e) {}
