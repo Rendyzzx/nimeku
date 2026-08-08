@@ -7,7 +7,7 @@
       "destination": "/api/sitemap"
     },
     {
-      "source": "/api/:path*",
+      "source": "/api/anime/:path*",
       "destination": "https://www.sankavollerei.com/anime/:path*"
     }
   ]

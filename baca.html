@@ -869,7 +869,7 @@
 <script>
 // Semua request lewat backend sendiri di /api/manga/* (lihat api/manga/[...path].js).
 // Ditaruh di bawah /api/manga/ (bukan langsung /api/) supaya tidak "ditelan"
-// oleh rewrite /api/:path* -> domain anime yang sudah ada di vercel.json.
+// oleh rewrite /api/anime/:path* -> domain anime yang sudah ada di vercel.json.
 const EP = {
   list:      () => `/api/manga/list`,
   search:    (q) => `/api/manga/search/${encodeURIComponent(q)}`,
