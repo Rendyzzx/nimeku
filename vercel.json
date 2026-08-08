@@ -9,6 +9,10 @@
     {
       "source": "/api/anime/:path*",
       "destination": "https://www.sankavollerei.com/anime/:path*"
+    },
+    {
+      "source": "/api/manga/:path*",
+      "destination": "https://www.sankavollerei.web.id/comic/bacakomik/:path*"
     }
   ]
 }
