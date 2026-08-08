@@ -159,9 +159,7 @@
             min-height: 230px;
             padding: 1.25rem 0 0;
             position: relative;
-            /* Gradient fade at bottom so character doesn't look cut off */
-            -webkit-mask-image: linear-gradient(to bottom, black 82%, transparent 100%);
-            mask-image: linear-gradient(to bottom, black 82%, transparent 100%);
+            background: transparent;
         }
 
         .char-frame {
@@ -181,6 +179,9 @@
             filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.55));
             animation: floatChar 6s ease-in-out infinite;
             will-change: transform;
+            /* Gradient fade at bottom so character doesn't look cut off */
+            -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
         }
 
         .char-glow {
