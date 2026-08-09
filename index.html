@@ -575,7 +575,7 @@
             <span style="--i:0">C</span><span style="--i:1">y</span><span style="--i:2">r</span><span style="--i:3">o</span><span style="--i:4">n</span><span style="--i:5">i</span><span style="--i:6">m</span><span style="--i:7">e</span>
         </div>
         <div class="cy-underline"></div>
-        <div class="cy-intro-tagline">Premium Portal</div>
+        <div class="cy-intro-tagline">Generate By Akira</div>
 
     </div>
 
@@ -589,8 +589,15 @@
                                                 /* ===== 3-photo manga panel montage (pure CSS timeline, GPU-only: transform + opacity) ===== */
         .cy-photo-stack {
             position: relative; width: 158px; height: 196px; z-index: 2; margin-bottom: 24px;
-            filter: drop-shadow(0 8px 20px rgba(0,0,0,.4));
+            filter: drop-shadow(0 14px 28px rgba(0,0,0,.6));
         }
+        .cy-photo-stack::before {
+            content: ''; position: absolute; left: 50%; top: 50%; width: 260px; height: 260px;
+            transform: translate(-50%, -50%); border-radius: 50%; z-index: -1;
+            background: radial-gradient(circle, rgba(255,255,255,.10) 0%, rgba(255,255,255,.03) 45%, transparent 70%);
+            opacity: 0; will-change: opacity; animation: cyGlowBehindIn 1s ease forwards .15s;
+        }
+        @keyframes cyGlowBehindIn { to { opacity: 1; } }
         .cy-photo-card {
             position: absolute; inset: 0; will-change: transform, opacity;
             opacity: 0;
@@ -919,7 +926,13 @@
                         if (isExternal) {
                             window.open(svc.page, '_blank', 'noopener,noreferrer');
                         } else {
-                            window.location.href = svc.page;
+                            // Show loading overlay instantly so the page doesn't feel "frozen" during navigation
+                            const ov = document.getElementById('loading-overlay');
+                            if (ov) ov.classList.remove('hidden');
+                            // Slight delay so the overlay actually paints before browser starts loading
+                            requestAnimationFrame(() => requestAnimationFrame(() => {
+                                window.location.href = svc.page;
+                            }));
                         }
                     });
                 }
