@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Status HD — Kirim Video Status WhatsApp Resolusi Tinggi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root{
+    --color-primary:#D6A755;
+    --color-accent:#5C8AA6;
+    --color-bg:#0B0C10;
+    --card:#181A22;
+    --wa-green:#25D366;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:var(--color-bg); color:#fff;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    display:flex; flex-direction:column; align-items:center;
+    padding:28px 16px 60px;
+  }
+  .font-heading{ font-family:'Space Grotesk',sans-serif; letter-spacing:-0.02em; }
+  .nb-shadow{ box-shadow:4px 4px 0 0 #000; }
+  .nb-shadow-sm{ box-shadow:2.5px 2.5px 0 0 #000; }
+  .nb-btn{ transition:transform .15s ease, box-shadow .15s ease; }
+  .nb-btn:active:not(:disabled){ transform:translate(2px,2px); box-shadow:1px 1px 0 0 #000; }
+  .nb-btn:not(:disabled):hover{ transform:translate(-1px,-1px); box-shadow:5px 5px 0 0 #000; }
+
+  header{ width:100%; max-width:520px; text-align:center; margin-bottom:22px; }
+  header .badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--card); border:2px solid #000; border-radius:10px;
+    padding:5px 12px; font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--color-primary);
+    box-shadow:2.5px 2.5px 0 0 #000; margin-bottom:14px;
+  }
+  header h1{
+    font-size:clamp(24px,6vw,32px); margin:0 0 8px; font-weight:800;
+  }
+  header h1 span{ color:var(--color-primary); }
+  header p{ color:#9aa0ac; font-size:14px; line-height:1.55; margin:0; }
+
+  .card{
+    width:100%; max-width:520px;
+    background:var(--card); border:2.5px solid #000; border-radius:18px;
+    padding:22px; box-shadow:4px 4px 0 0 #000;
+  }
+
+  .drop{
+    border:1.5px dashed #3a3d47; border-radius:14px;
+    padding:26px 16px; text-align:center; cursor:pointer;
+    background:rgba(255,255,255,0.02);
+  }
+  .drop.drag{ border-color:var(--color-primary); background:rgba(214,167,85,0.06); }
+  .drop input{ display:none; }
+  .drop .icon{
+    width:44px;height:44px;margin:0 auto 10px;border-radius:12px;
+    background:var(--color-primary); border:2px solid #000;
+    display:flex;align-items:center;justify-content:center;color:#000;font-size:18px;
+  }
+  .drop .main-txt{ font-weight:700; font-size:14.5px; margin-bottom:3px; }
+  .drop .sub-txt{ font-size:12.5px; color:#8a8f9b; }
+
+  .preview{ display:none; margin-top:14px; border-radius:12px; overflow:hidden; border:2px solid #000; }
+  .preview.show{ display:block; }
+  .preview video{ width:100%; display:block; max-height:240px; background:#000; }
+  .preview .meta{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 12px; background:#000; font-size:12px;
+  }
+  .preview .meta button{ background:none;border:none;color:var(--color-primary);font-weight:700;font-size:12px;cursor:pointer; }
+
+  .field{ margin-top:18px; }
+  .field label{
+    display:block; font-size:11.5px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.06em; color:#8a8f9b; margin-bottom:7px;
+  }
+  .phone-wrap{
+    display:flex; border:2px solid #000; border-radius:10px; overflow:hidden;
+    background:var(--color-bg);
+  }
+  .phone-wrap .cc{
+    display:flex;align-items:center;gap:6px;padding:0 12px;
+    background:#20222c; font-weight:700; font-size:14.5px; border-right:2px solid #000;
+  }
+  .phone-wrap input{
+    flex:1;border:none;outline:none;background:transparent;color:#fff;
+    padding:12px; font-size:15px; font-family:inherit; min-width:0;
+  }
+  .hint{ font-size:11.5px; color:#6b7280; margin-top:6px; }
+  .err-msg{ display:none; font-size:12.5px; color:#f87171; font-weight:600; margin-top:6px; }
+
+  .submit{
+    margin-top:24px; width:100%; border:2px solid #000; border-radius:12px;
+    background:var(--wa-green); color:#04120a; font-weight:800; font-size:15px;
+    padding:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .submit:disabled{ opacity:.55; cursor:not-allowed; }
+
+  .ring{ width:18px;height:18px;border-radius:50%; display:none; position:relative;
+    background:conic-gradient(#04120a 0deg, #04120a var(--ring-deg,0deg), rgba(4,18,10,0.25) var(--ring-deg,0deg)); }
+  .ring::after{ content:"";position:absolute;inset:3px;border-radius:50%;background:var(--wa-green); }
+  .submit.loading .ring{ display:block; }
+  .submit.loading .label-default{ display:none; }
+
+  .result{ margin-top:16px; border-radius:10px; padding:12px 14px; font-size:13.5px; display:none; line-height:1.5; border:2px solid #000; }
+  .result.show{ display:block; }
+  .result.ok{ background:rgba(37,211,102,0.12); color:#4ade80; }
+  .result.err{ background:rgba(248,113,113,0.1); color:#f87171; }
+
+  .back-link{ display:inline-flex; gap:6px; align-items:center; color:#8a8f9b; font-size:13px; font-weight:600; text-decoration:none; margin-bottom:18px; }
+  .back-link:hover{ color:#fff; }
+</style>
+</head>
+<body>
+
+<a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Kembali ke beranda</a>
+
+<header>
+  <span class="badge"><i class="fas fa-bolt"></i> Anti kompres WhatsApp</span>
+  <h1 class="font-heading">Status <span>HD</span> ke WhatsApp-mu</h1>
+  <p>Upload video aslinya, bot kami kirim balik versi resolusi tinggi ke nomor WhatsApp kamu — tanpa dikompres seperti status biasa.</p>
+</header>
+
+<div class="card">
+  <form id="hdForm">
+    <div id="dropZone" class="drop">
+      <input type="file" id="fileInput" accept="video/*">
+      <div class="icon"><i class="fas fa-arrow-up"></i></div>
+      <div class="main-txt">Tap untuk pilih video, atau seret ke sini</div>
+      <div class="sub-txt">MP4, MOV, atau WebM — maks. 64 MB</div>
+    </div>
+
+    <div id="preview" class="preview">
+      <video id="previewVideo" controls playsinline></video>
+      <div class="meta">
+        <span id="fileMeta">nama_file.mp4</span>
+        <button type="button" id="removeFile">Hapus</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="phone">Nomor WhatsApp</label>
+      <div class="phone-wrap">
+        <span class="cc">🇮🇩 +62</span>
+        <input type="tel" id="phone" placeholder="812xxxxxxx" inputmode="numeric" autocomplete="tel">
+      </div>
+      <div class="hint">Tanpa angka 0 di depan, contoh: 81234567890</div>
+      <div class="err-msg" id="phoneErr">Nomor belum valid. Cek kembali formatnya.</div>
+    </div>
+
+    <button type="submit" class="submit nb-btn" id="submitBtn">
+      <span class="label-default"><i class="fab fa-whatsapp"></i> Kirim, proses jadi HD</span>
+      <span class="ring" id="ring"></span>
+    </button>
+
+    <div class="result" id="result"></div>
+  </form>
+</div>
+
+<script type="module">
+import { upload } from 'https://esm.sh/@vercel/blob@0.27.0/client';
+
+const MAX_SIZE_MB = 64;
+const dropZone   = document.getElementById('dropZone');
+const fileInput  = document.getElementById('fileInput');
+const preview    = document.getElementById('preview');
+const previewVid = document.getElementById('previewVideo');
+const fileMeta   = document.getElementById('fileMeta');
+const removeBtn  = document.getElementById('removeFile');
+const form       = document.getElementById('hdForm');
+const phoneInput = document.getElementById('phone');
+const phoneErr   = document.getElementById('phoneErr');
+const submitBtn  = document.getElementById('submitBtn');
+const resultBox  = document.getElementById('result');
+const ring       = document.getElementById('ring');
+
+let selectedFile = null;
+
+function fmtSize(bytes){
+  const mb = bytes / (1024*1024);
+  return mb >= 1 ? mb.toFixed(1) + ' MB' : (bytes/1024).toFixed(0) + ' KB';
+}
+
+function setFile(file){
+  if(!file) return;
+  if(!file.type.startsWith('video/')){ showResult('err','File yang dipilih bukan video.'); return; }
+  if(file.size > MAX_SIZE_MB * 1024 * 1024){ showResult('err', `Ukuran video melebihi ${MAX_SIZE_MB} MB.`); return; }
+  selectedFile = file;
+  previewVid.src = URL.createObjectURL(file);
+  fileMeta.textContent = `${file.name} · ${fmtSize(file.size)}`;
+  preview.classList.add('show');
+  dropZone.style.display = 'none';
+  resultBox.classList.remove('show');
+}
+
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', e => setFile(e.target.files[0]));
+['dragenter','dragover'].forEach(evt => dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('drag'); }));
+['dragleave','drop'].forEach(evt => dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.remove('drag'); }));
+dropZone.addEventListener('drop', e => setFile(e.dataTransfer.files[0]));
+
+removeBtn.addEventListener('click', () => {
+  selectedFile = null;
+  fileInput.value = '';
+  preview.classList.remove('show');
+  dropZone.style.display = '';
+});
+
+function normalizePhone(raw){
+  let digits = raw.replace(/\D/g,'');
+  if(digits.startsWith('0')) digits = digits.slice(1);
+  if(digits.startsWith('62')) digits = digits.slice(2);
+  return digits;
+}
+function isValidPhone(digits){ return digits.length >= 8 && digits.length <= 13; }
+
+function showResult(type, msg){
+  resultBox.className = 'result show ' + type;
+  resultBox.textContent = msg;
+}
+function setLoading(loading){
+  submitBtn.disabled = loading;
+  submitBtn.classList.toggle('loading', loading);
+}
+function animateRing(){
+  let deg = 0;
+  const iv = setInterval(() => { deg = (deg+24)%360; ring.style.setProperty('--ring-deg', deg+'deg'); }, 90);
+  return () => clearInterval(iv);
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  phoneErr.style.display = 'none';
+  resultBox.classList.remove('show');
+
+  if(!selectedFile){ showResult('err','Pilih video terlebih dahulu.'); return; }
+
+  const digits = normalizePhone(phoneInput.value);
+  if(!isValidPhone(digits)){ phoneErr.style.display = 'block'; return; }
+  const fullNumber = '62' + digits;
+
+  setLoading(true);
+  const stopRing = animateRing();
+
+  try {
+    await upload(selectedFile.name, selectedFile, {
+      access: 'public',
+      handleUploadUrl: '/api/status-upload',
+      clientPayload: JSON.stringify({ phone: fullNumber })
+    });
+
+    showResult('ok', `Video terkirim ke server. Cek WhatsApp di +${fullNumber} dalam beberapa saat untuk menerima versi HD-nya.`);
+    form.reset();
+    selectedFile = null;
+    preview.classList.remove('show');
+    dropZone.style.display = '';
+  } catch(err){
+    showResult('err', 'Gagal upload: ' + err.message);
+  } finally {
+    stopRing();
+    setLoading(false);
+  }
+});
+</script>
+</body>
+</html>
