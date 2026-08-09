@@ -547,300 +547,136 @@
     </style>
 </head>
 <body class="cy-intro-loading min-h-screen text-white flex flex-col items-center p-4 sm:p-6 relative">
-    <!-- ===== CYRONIME INTRO ANIMATION (home page only) ===== -->
+    <!-- ===== CYRONIME MANGA-PANEL INTRO (home page only) ===== -->
     <div id="cy-intro" class="cy-intro" role="presentation" aria-hidden="true">
-        <!-- particle layer -->
-        <div class="cy-intro-particles" id="cy-intro-particles"></div>
-        <!-- glow blobs -->
-        <div class="cy-intro-glow cy-intro-glow-1"></div>
-        <div class="cy-intro-glow cy-intro-glow-2"></div>
-        <!-- light rays -->
-        <div class="cy-intro-rays"></div>
+        <div class="cy-tone"></div>
+        <div class="cy-glow cy-glow-a"></div>
+        <div class="cy-glow cy-glow-b"></div>
+        <div class="cy-particles" id="cy-particles"></div>
+        <div class="cy-burst"><svg viewBox="0 0 400 400" fill="none"><g stroke="rgba(244,230,200,.35)" stroke-width="1.5" stroke-linecap="round"><line x1="200" y1="200" x2="200" y1="10"/><line x1="200" y1="200" x2="200" y2="390"/><line x1="200" y1="200" x2="10" y2="200"/><line x1="200" y1="200" x2="390" y2="200"/><line x1="200" y1="200" x2="60" y2="60"/><line x1="200" y1="200" x2="340" y2="60"/><line x1="200" y1="200" x2="60" y2="340"/><line x1="200" y1="200" x2="340" y2="340"/><line x1="200" y1="200" x2="200" y2="50" stroke-width="2.5"/><line x1="200" y1="200" x2="130" y2="130"/><line x1="200" y1="200" x2="270" y2="130"/><line x1="200" y1="200" x2="130" y2="270"/><line x1="200" y1="200" x2="270" y2="270"/></g></svg></div>
 
-        <!-- mascot character -->
-        <div class="cy-intro-char-wrap">
-            <div class="cy-intro-ring cy-intro-ring-1"></div>
-            <div class="cy-intro-ring cy-intro-ring-2"></div>
-            <div class="cy-intro-ring cy-intro-ring-3"></div>
-            <div class="cy-intro-photo">
-                <img src="https://media.base44.com/images/public/6a77ba969ad66e37f8bff09b/3307e2207_d42874e2f96ff6f5171ecb74bae5cf06.jpg" alt="" width="160" height="160" loading="eager" decoding="async">
+        <svg class="cy-corner cy-corner-tl" viewBox="0 0 64 64"><g fill="none" stroke="#D6A755" stroke-width="1.2"><path d="M6 26 L6 6 L26 6"/></g><g fill="#D6A755"><rect x="2" y="2" width="6" height="6" transform="rotate(45 5 5)"/><rect x="2" y="15" width="5" height="5" transform="rotate(45 4.5 17.5)"/><rect x="15" y="2" width="5" height="5" transform="rotate(45 17.5 4.5)"/></g></svg>
+        <svg class="cy-corner cy-corner-tr" viewBox="0 0 64 64"><g fill="none" stroke="#5C8AA6" stroke-width="1.2"><path d="M58 26 L58 6 L38 6"/></g><g fill="#5C8AA6"><rect x="56" y="2" width="6" height="6" transform="rotate(45 59 5)"/><rect x="57" y="15" width="5" height="5" transform="rotate(45 59.5 17.5)"/><rect x="44" y="2" width="5" height="5" transform="rotate(45 46.5 4.5)"/></g></svg>
+        <svg class="cy-corner cy-corner-bl" viewBox="0 0 64 64"><g fill="none" stroke="#5C8AA6" stroke-width="1.2"><path d="M6 38 L6 58 L26 58"/></g><g fill="#5C8AA6"><rect x="2" y="56" width="6" height="6" transform="rotate(45 5 59)"/><rect x="2" y="44" width="5" height="5" transform="rotate(45 4.5 46.5)"/><rect x="15" y="57" width="5" height="5" transform="rotate(45 17.5 59.5)"/></g></svg>
+        <svg class="cy-corner cy-corner-br" viewBox="0 0 64 64"><g fill="none" stroke="#D6A755" stroke-width="1.2"><path d="M58 38 L58 58 L38 58"/></g><g fill="#D6A755"><rect x="56" y="56" width="6" height="6" transform="rotate(45 59 59)"/><rect x="57" y="44" width="5" height="5" transform="rotate(45 59.5 46.5)"/><rect x="44" y="57" width="5" height="5" transform="rotate(45 46.5 59.5)"/></g></svg>
+
+        <div class="cy-panel">
+            <div class="cy-panel-photo">
+                <img src="https://media.base44.com/images/public/6a77ba969ad66e37f8bff09b/3307e2207_d42874e2f96ff6f5171ecb74bae5cf06.jpg" alt="" width="200" height="240" loading="eager" decoding="async">
+                <div class="cy-panel-tone"></div>
             </div>
-            <!-- sparkles -->
-            <svg class="cy-intro-spark cy-intro-spark-1" viewBox="0 0 24 24"><path d="M12 0l1.8 7.2L21 9l-7.2 1.8L12 18l-1.8-7.2L3 9l7.2-1.8z" fill="#D6A755"/></svg>
-            <svg class="cy-intro-spark cy-intro-spark-2" viewBox="0 0 24 24"><path d="M12 0l1.8 7.2L21 9l-7.2 1.8L12 18l-1.8-7.2L3 9l7.2-1.8z" fill="#5C8AA6"/></svg>
-            <svg class="cy-intro-spark cy-intro-spark-3" viewBox="0 0 24 24"><path d="M12 0l1.8 7.2L21 9l-7.2 1.8L12 18l-1.8-7.2L3 9l7.2-1.8z" fill="#D6A755"/></svg>
         </div>
 
-        <!-- wordmark -->
         <div class="cy-intro-wordmark" aria-hidden="true">
             <span style="--i:0">C</span><span style="--i:1">y</span><span style="--i:2">r</span><span style="--i:3">o</span><span style="--i:4">n</span><span style="--i:5">i</span><span style="--i:6">m</span><span style="--i:7">e</span>
         </div>
-
-        <!-- tagline -->
+        <div class="cy-underline"></div>
         <div class="cy-intro-tagline">Premium Portal</div>
 
-        <!-- black fade overlay (appears after intro) -->
-        <div class="cy-intro-fade" id="cy-intro-fade"></div>
+        <div class="cy-curtain" id="cy-curtain"></div>
     </div>
 
-    <!-- page content reveal wrapper -->
     <div class="cy-page-reveal" id="cy-page-reveal">
 
     <style>
-        /* ===== INTRO ===== */
-        .cy-intro {
-            position: fixed; inset: 0; z-index: 999999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: #0B0C10; overflow: hidden;
-        }
-        .cy-intro.cy-intro-out { opacity: 0; visibility: hidden; transition: opacity .4s ease, visibility .4s ease; }
+        .cy-intro { position: fixed; inset: 0; z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0B0C10; overflow: hidden; }
 
-        /* particles */
-        .cy-intro-particles { position: absolute; inset: 0; pointer-events: none; }
-        .cy-intro-particles span {
-            position: absolute; border-radius: 50%; opacity: 0;
-            animation: cyParticleFloat linear infinite;
-        }
-        @keyframes cyParticleFloat {
-            0% { opacity: 0; transform: translateY(0) scale(.5); }
-            20% { opacity: .6; }
-            80% { opacity: .4; }
-            100% { opacity: 0; transform: translateY(-120px) scale(1); }
-        }
+        .cy-tone { position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(214,167,85,.04), transparent 70%); opacity: 0; animation: cyFadeTo .8s ease forwards; }
+        @keyframes cyFadeTo { to { opacity: 1; } }
 
-        /* glow blobs */
-        .cy-intro-glow { position: absolute; border-radius: 50%; filter: blur(50px); }
-        .cy-intro-glow-1 {
-            width: 300px; height: 300px; background: rgba(214,167,85,.25);
-            top: 15%; left: 50%; transform: translateX(-50%);
-            animation: cyGlowBreath 4s ease-in-out infinite;
-        }
-        .cy-intro-glow-2 {
-            width: 260px; height: 260px; background: rgba(92,138,166,.2);
-            top: 35%; left: 50%; transform: translateX(-50%);
-            animation: cyGlowBreath 4s ease-in-out infinite reverse;
-        }
-        @keyframes cyGlowBreath {
-            0%, 100% { opacity: .4; transform: translateX(-50%) scale(1); }
-            50% { opacity: .8; transform: translateX(-50%) scale(1.15); }
-        }
+        .cy-glow { position: absolute; border-radius: 50%; filter: blur(28px); opacity: 0; will-change: opacity; animation: cyGlowIn 1.1s ease forwards; }
+        .cy-glow-a { width: 280px; height: 280px; background: rgba(214,167,85,.22); top: 10%; left: 50%; transform: translateX(-50%); animation-delay: .05s; }
+        .cy-glow-b { width: 240px; height: 240px; background: rgba(92,138,166,.18); top: 32%; left: 50%; transform: translateX(-50%); animation-delay: .2s; }
+        @keyframes cyGlowIn { to { opacity: 1; } }
 
-        /* light rays */
-        .cy-intro-rays {
-            position: absolute; top: 50%; left: 50%; width: 600px; height: 600px;
-            transform: translate(-50%, -50%);
-            background: conic-gradient(from 0deg, transparent 0deg, rgba(214,167,85,.08) 8deg, transparent 16deg, transparent 40deg, rgba(92,138,166,.06) 48deg, transparent 56deg, transparent 90deg, rgba(214,167,85,.05) 98deg, transparent 106deg, transparent 180deg, rgba(92,138,166,.04) 188deg, transparent 196deg, transparent 270deg, rgba(214,167,85,.05) 278deg, transparent 286deg, transparent 360deg);
-            border-radius: 50%;
-            animation: cyRaySpin 12s linear infinite;
-            opacity: 0;
-            animation: cyRaySpin 12s linear infinite, cyRayFade .6s ease forwards .2s;
-        }
-        @keyframes cyRaySpin { to { transform: translate(-50%, -50%) rotate(360deg); } }
-        @keyframes cyRayFade { to { opacity: 1; } }
+        .cy-particles { position: absolute; inset: 0; pointer-events: none; }
+        .cy-particles span { position: absolute; border-radius: 50%; opacity: 0; will-change: transform, opacity; animation: cyDust linear infinite; }
+        @keyframes cyDust { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: .55; } 80% { opacity: .35; } 100% { opacity: 0; transform: translateY(-90px); } }
 
-        /* mascot */
-        .cy-intro-char-wrap {
-            position: relative; width: 140px; height: 140px; margin-bottom: 28px; z-index: 2;
-        }
-        .cy-intro-photo {
-            position: relative; width: 100%; height: 100%; border-radius: 50%; overflow: hidden;
-            border: 3px solid #0B0C10;
-            box-shadow: 0 0 0 2px rgba(214,167,85,.6), 0 16px 30px -8px rgba(0,0,0,.7);
-            clip-path: circle(0% at 50% 50%);
-            animation: cyIntroReveal .9s cubic-bezier(.22,.85,.24,1.15) forwards .15s;
-        }
-        .cy-intro-photo img {
-            width: 100%; height: 100%; object-fit: cover; object-position: center 28%;
-            filter: grayscale(1) contrast(1.12) brightness(1.08);
-        }
-        .cy-intro-photo::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(155deg, rgba(214,167,85,.35), rgba(92,138,166,.28));
-            mix-blend-mode: color;
-        }
-        @keyframes cyIntroReveal { to { clip-path: circle(72% at 50% 50%); } }
+        .cy-burst { position: absolute; top: 50%; left: 50%; width: 0; height: 0; pointer-events: none; }
+        .cy-burst svg { position: absolute; top: 50%; left: 50%; width: 400px; height: 400px; transform: translate(-50%,-50%) scale(0); opacity: 0; will-change: transform, opacity; animation: cyBurst .55s ease-out forwards .8s; }
+        @keyframes cyBurst { 0% { transform: translate(-50%,-50%) scale(.2); opacity: 0; } 40% { opacity: .6; } 100% { transform: translate(-50%,-50%) scale(1.1); opacity: 0; } }
 
-        /* mascot bounce/wiggle after appearing */
-        .cy-intro-char-wrap > .cy-intro-photo {
-            animation: cyIntroReveal .9s cubic-bezier(.22,.85,.24,1.15) forwards .15s,
-                       cyMascotBounce 1.8s cubic-bezier(.34,1.2,.4,1) 1.1s 1 both;
-        }
-        @keyframes cyMascotBounce {
-            0% { transform: translateY(0) rotate(0deg); }
-            15% { transform: translateY(-12px) rotate(-5deg); }
-            30% { transform: translateY(0) rotate(4deg); }
-            50% { transform: translateY(-7px) rotate(-3deg); }
-            70% { transform: translateY(0) rotate(2deg); }
-            85% { transform: translateY(-3px) rotate(-1deg); }
-            100% { transform: translateY(0) rotate(0deg); }
-        }
+        .cy-corner { position: absolute; width: 46px; height: 46px; opacity: 0; will-change: transform, opacity; animation: cyCornerIn .5s ease forwards; }
+        .cy-corner-tl { top: 6%; left: 6%; transform: scale(.6); animation-delay: .15s; }
+        .cy-corner-tr { top: 6%; right: 6%; transform: scale(.6); animation-delay: .25s; }
+        .cy-corner-bl { bottom: 6%; left: 6%; transform: scale(.6); animation-delay: .25s; }
+        .cy-corner-br { bottom: 6%; right: 6%; transform: scale(.6); animation-delay: .35s; }
+        @keyframes cyCornerIn { to { opacity: 1; transform: scale(1); } }
 
-        /* rings */
-        .cy-intro-ring {
-            position: absolute; border-radius: 50%; border: 1.5px solid transparent;
-            opacity: 0;
+        .cy-panel {
+            position: relative; width: 158px; height: 196px; z-index: 2; margin-bottom: 24px;
+            clip-path: polygon(9% 0%, 100% 0%, 91% 100%, 0% 100%);
+            filter: drop-shadow(0 16px 26px rgba(0,0,0,.55));
+            transform: translateY(24px) scale(.86); opacity: 0; will-change: transform, opacity;
+            animation: cyPanelIn .75s cubic-bezier(.22,.85,.24,1.1) forwards .22s;
         }
-        .cy-intro-ring-1 {
-            inset: -10px; border-color: rgba(214,167,85,.5); border-style: dashed;
-            animation: cyRingExpand .8s ease-out forwards .5s, cyRingSpin 6s linear infinite;
+        @keyframes cyPanelIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+        .cy-panel-photo { position: relative; width: 100%; height: 100%; overflow: hidden; background: #111; box-shadow: inset 0 0 0 2px rgba(214,167,85,.5); }
+        .cy-panel-photo img {
+            width: 100%; height: 100%; object-fit: cover; object-position: center 24%;
+            filter: grayscale(1) contrast(1.15) brightness(1.05);
+            transform: scale(1.22) translateX(-5%); will-change: transform;
+            animation: cyPhotoSettle .95s cubic-bezier(.22,.85,.24,1) forwards .32s;
         }
-        .cy-intro-ring-2 {
-            inset: -22px; border-color: rgba(92,138,166,.4); border-style: dashed;
-            animation: cyRingExpand .8s ease-out forwards .7s, cyRingSpinRev 9s linear infinite;
-        }
-        .cy-intro-ring-3 {
-            inset: -34px; border-color: rgba(214,167,85,.25);
-            animation: cyRingExpand .8s ease-out forwards .9s, cyRingSpin 14s linear infinite;
-        }
-        @keyframes cyRingExpand { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes cyRingSpin { to { transform: rotate(360deg); } }
-        @keyframes cyRingSpinRev { to { transform: rotate(-360deg); } }
+        @keyframes cyPhotoSettle { to { transform: scale(1.06) translateX(0); } }
+        .cy-panel-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(155deg, rgba(214,167,85,.32), rgba(92,138,166,.26)); mix-blend-mode: color; }
+        .cy-panel-tone { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(11,12,16,.4)); }
 
-        /* sparkles */
-        .cy-intro-spark {
-            position: absolute; opacity: 0; transform: scale(0);
-        }
-        .cy-intro-spark-1 { top: -8px; right: -4px; width: 18px; height: 18px; animation: cySparkle .6s ease-out forwards 1.3s; }
-        .cy-intro-spark-2 { bottom: 4px; left: -12px; width: 14px; height: 14px; animation: cySparkle .6s ease-out forwards 1.5s; }
-        .cy-intro-spark-3 { top: 20px; right: -14px; width: 10px; height: 10px; animation: cySparkle .6s ease-out forwards 1.7s; }
-        @keyframes cySparkle {
-            0% { opacity: 0; transform: scale(0) rotate(0deg); }
-            50% { opacity: 1; transform: scale(1.2) rotate(25deg); }
-            100% { opacity: 0; transform: scale(.9) rotate(45deg); }
-        }
-
-        /* wordmark 3D */
-        .cy-intro-wordmark {
-            position: relative; display: flex; perspective: 800px; z-index: 2;
-            overflow: hidden; padding: 0 4px;
-        }
+        .cy-intro-wordmark { position: relative; display: flex; perspective: 800px; z-index: 2; overflow: hidden; padding: 0 4px; }
         .cy-intro-wordmark span {
-            display: inline-block;
-            font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
-            font-weight: 900;
-            font-size: clamp(28px, 8vw, 46px);
-            letter-spacing: .01em;
-            color: #F4E6C8;
-            transform-style: preserve-3d;
-            transform: rotateX(-100deg) translateY(10px) scale(.7);
-            opacity: 0;
-            animation: cyIntroLetterRise .7s cubic-bezier(.22,.85,.24,1.35) forwards;
-            animation-delay: calc(var(--i) * 65ms + 750ms);
-            text-shadow:
-                0 1px 0 #b8873a, 0 2px 0 #a3763a, 0 3px 0 #8f653a,
-                0 4px 0 #7a543a, 0 6px 12px rgba(0,0,0,.5);
+            display: inline-block; font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+            font-weight: 900; font-size: clamp(26px, 7.5vw, 42px); letter-spacing: .01em; color: #F4E6C8;
+            transform-style: preserve-3d; transform: rotateX(-100deg) translateY(10px) scale(.72); opacity: 0;
+            will-change: transform, opacity; animation: cyLetterRise .6s cubic-bezier(.22,.85,.24,1.35) forwards;
+            animation-delay: calc(var(--i) * 60ms + 1050ms);
+            text-shadow: 0 1px 0 #b8873a, 0 2px 0 #a3763a, 0 3px 0 #8f653a, 0 4px 0 #7a543a, 0 6px 12px rgba(0,0,0,.5);
         }
-        @keyframes cyIntroLetterRise {
-            0% { opacity: 0; transform: rotateX(-100deg) translateY(12px) scale(.7); }
-            60% { opacity: 1; transform: rotateX(15deg) translateY(-5px) scale(1.08); }
-            100% { opacity: 1; transform: rotateX(0deg) translateY(0) scale(1); }
-        }
-        /* shine sweep over wordmark */
-        .cy-intro-wordmark::after {
-            content: ''; position: absolute; top: 0; left: -35%; width: 30%; height: 100%;
-            background: linear-gradient(100deg, transparent, rgba(255,255,255,.65), transparent);
-            transform: skewX(-18deg);
-            opacity: 0;
-            animation: cyIntroShine .9s ease-in-out forwards 2.3s;
-        }
-        @keyframes cyIntroShine {
-            0% { left: -35%; opacity: 0; }
-            15% { opacity: .85; }
-            65% { left: 125%; opacity: 0; }
-            100% { left: 125%; opacity: 0; }
-        }
+        @keyframes cyLetterRise { 0% { opacity: 0; transform: rotateX(-100deg) translateY(12px) scale(.72); } 60% { opacity: 1; transform: rotateX(14deg) translateY(-4px) scale(1.07); } 100% { opacity: 1; transform: rotateX(0deg) translateY(0) scale(1); } }
 
-        /* tagline */
-        .cy-intro-tagline {
-            font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 12px;
-            letter-spacing: .35em; text-transform: uppercase;
-            color: rgba(214,167,85,.7);
-            margin-top: 10px; z-index: 2;
-            opacity: 0;
-            animation: cyTaglineIn .6s ease forwards 2.6s;
-        }
-        @keyframes cyTaglineIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .cy-underline { width: 90px; height: 3px; margin-top: 10px; border-radius: 3px; background: linear-gradient(90deg,#D6A755,#5C8AA6); transform: scaleX(0); transform-origin: center; will-change: transform; animation: cyUnderline .45s ease forwards 1.75s; z-index: 2; }
+        @keyframes cyUnderline { to { transform: scaleX(1); } }
 
-        /* black fade overlay (between intro and content) */
-        .cy-intro-fade {
-            position: absolute; inset: 0; background: #0B0C10; z-index: 999;
-            opacity: 0; pointer-events: none;
-        }
-        .cy-intro-fade.cy-fade-active {
-            animation: cyBlackFade .5s ease forwards;
-        }
-        @keyframes cyBlackFade { from { opacity: 0; } to { opacity: 1; } }
+        .cy-intro-tagline { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: rgba(214,167,85,.7); margin-top: 12px; z-index: 2; opacity: 0; will-change: transform, opacity; animation: cyTaglineIn .5s ease forwards 2s; }
+        @keyframes cyTaglineIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ===== PAGE REVEAL ===== */
-        .cy-page-reveal {
-            position: relative; width: 100%; min-height: 100vh;
-            clip-path: inset(100% 0 0 0);
-            animation: cyPageRise .8s cubic-bezier(.22,.85,.24,1) forwards;
-            animation-delay: 4.1s;
-        }
-        @keyframes cyPageRise { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
+        .cy-curtain { position: absolute; inset: 0; background: #0B0C10; z-index: 3; transform: translateY(0); will-change: transform; }
+        .cy-curtain.cy-curtain-lift { transition: transform .7s cubic-bezier(.6,0,.15,1); transform: translateY(-100%); }
+
+        .cy-page-reveal { position: relative; width: 100%; min-height: 100vh; }
 
         body.cy-intro-loading { overflow: hidden !important; }
 
         @media (prefers-reduced-motion: reduce) {
             .cy-intro { display: none !important; }
-            .cy-page-reveal { clip-path: inset(0 0 0 0) !important; animation: none !important; }
             body.cy-intro-loading { overflow: auto !important; }
         }
     </style>
     <script>
         (function () {
             var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var intro = document.getElementById('cy-intro');
             if (reduceMotion) {
                 document.body.classList.remove('cy-intro-loading');
-                var intro = document.getElementById('cy-intro');
-                var reveal = document.getElementById('cy-page-reveal');
                 if (intro) intro.style.display = 'none';
-                if (reveal) { reveal.style.clipPath = 'none'; reveal.style.animation = 'none'; }
                 return;
             }
 
-            // Generate particles
-            var pContainer = document.getElementById('cy-intro-particles');
-            if (pContainer) {
-                for (var i = 0; i < 25; i++) {
-                    var p = document.createElement('span');
-                    var size = Math.random() * 3 + 1.5;
-                    p.style.width = size + 'px';
-                    p.style.height = size + 'px';
-                    p.style.left = Math.random() * 100 + '%';
-                    p.style.top = Math.random() * 100 + '%';
-                    p.style.background = Math.random() > 0.5 ? 'rgba(214,167,85,' + (Math.random() * .5 + .2) + ')' : 'rgba(92,138,166,' + (Math.random() * .4 + .15) + ')';
-                    p.style.animationDuration = (Math.random() * 3 + 2.5) + 's';
-                    p.style.animationDelay = (Math.random() * 2) + 's';
-                    pContainer.appendChild(p);
-                }
-            }
+            // Particles removed for performance — intro is now lightweight
 
-            // Timeline: intro runs ~3.5s, then black fade .5s, then page rises .8s
-            // At 3.5s: trigger black fade
+            // At 2.9s: curtain lifts bottom-to-top over 0.7s
             setTimeout(function () {
-                var fade = document.getElementById('cy-intro-fade');
-                if (fade) fade.classList.add('cy-fade-active');
-            }, 3500);
-
-            // At 4.0s: hide intro, start page reveal
-            setTimeout(function () {
-                var intro = document.getElementById('cy-intro');
-                if (intro) intro.classList.add('cy-intro-out');
+                var curtain = document.getElementById('cy-curtain');
+                if (curtain) curtain.classList.add('cy-curtain-lift');
                 document.body.classList.remove('cy-intro-loading');
-            }, 4000);
+            }, 2900);
 
-            // At 4.9s: fully remove intro from DOM
+            // At 3.7s: intro fully removed from DOM
             setTimeout(function () {
-                var intro = document.getElementById('cy-intro');
-                if (intro) intro.style.display = 'none';
-            }, 4900);
+                if (intro) intro.remove();
+            }, 3700);
         })();
     </script>
-INTRO_EOF
-wc -l intro_block.html
-
 
     <div class="grain"></div>
     <div class="dust dust-1"></div>
@@ -1054,17 +890,30 @@ wc -l intro_block.html
                 const card = document.createElement('div');
                 card.className = `fade-up bg-darkcard border-2.5 border-black rounded-2xl p-4 nb-shadow relative overflow-hidden ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0px_0px_#000000] transition-all'}`;
                 card.style.animationDelay = `${i * 0.08}s`;
+                card.style.touchAction = 'manipulation';
+                card.style.WebkitTapHighlightColor = 'transparent';
+                card.style.minHeight = '88px';
 
+                // Robust tap handler: track pointer down position, only fire if pointer up is close (prevents mis-tap on scroll)
                 if (isLocked) {
-                    card.onclick = () => showLockModal(svc.lockMessage || 'Layanan ini sedang dikunci sementara.');
+                    card.addEventListener('click', () => showLockModal(svc.lockMessage || 'Layanan ini sedang dikunci sementara.'));
                 } else if (svc.page) {
-                    card.onclick = () => {
+                    let pDownX = 0, pDownY = 0, pDownT = 0;
+                    card.addEventListener('pointerdown', (e) => {
+                        pDownX = e.clientX; pDownY = e.clientY; pDownT = Date.now();
+                    });
+                    card.addEventListener('click', (e) => {
+                        // If pointer moved more than 10px or took too long, it was a scroll/swipe — ignore
+                        const dx = Math.abs(e.clientX - pDownX);
+                        const dy = Math.abs(e.clientY - pDownY);
+                        const dt = Date.now() - pDownT;
+                        if (dx > 10 || dy > 10 || dt > 500) { e.preventDefault(); return; }
                         if (isExternal) {
                             window.open(svc.page, '_blank', 'noopener,noreferrer');
                         } else {
                             window.location.href = svc.page;
                         }
-                    };
+                    });
                 }
 
                 // Lock badge
