@@ -519,6 +519,11 @@
         @media (min-width: 640px) {
             .char-frame { width: 230px; }
         }
+        @media (min-width: 1280px) {
+            #services-grid { grid-template-columns: repeat(4, 1fr) !important; }
+            #site-main, #site-footer, #site-header, #site-warning-banner, #site-promo-banner { max-width: 64rem; }
+            #hero-flex { max-width: 64rem; }
+        }
         @media (min-width: 1024px) {
             .char-frame { width: 280px; }
             #char-showcase { min-height: 300px; }
@@ -532,7 +537,7 @@
             #hero-flex #char-showcase { order: 2; flex: 0 0 40%; }
             #hero-flex #site-header { order: 1; flex: 1 1 60%; text-align: left; }
             #site-main, #site-footer, #site-warning-banner, #site-promo-banner { max-width: 56rem; }
-            #hero-banner { height: 12rem; }
+            #hero-banner { height: 14rem; }
         }
 
         /* Respect reduced motion preference */
@@ -591,9 +596,16 @@
             position: relative; width: 158px; height: 196px; z-index: 2; margin-bottom: 24px;
             filter: drop-shadow(0 14px 28px rgba(0,0,0,.6));
         }
+        @media (min-width: 640px) {
+            .cy-photo-stack { width: 190px; height: 236px; }
+        }
+        @media (min-width: 1024px) {
+            .cy-photo-stack { width: 220px; height: 272px; }
+        }
         .cy-photo-stack::before {
             content: ''; position: absolute; left: 50%; top: 50%; width: 260px; height: 260px;
             transform: translate(-50%, -50%); border-radius: 50%; z-index: -1;
+            transition: width .3s, height .3s;
             background: radial-gradient(circle, rgba(255,255,255,.10) 0%, rgba(255,255,255,.03) 45%, transparent 70%);
             opacity: 0; will-change: opacity; animation: cyGlowBehindIn 1s ease forwards .15s;
         }
@@ -604,17 +616,17 @@
         }
         /* Card 1: pops in first, holds, then slides away left as card 2 arrives */
         .cy-photo-card-1 {
-            clip-path: polygon(9% 0%, 100% 0%, 91% 100%, 0% 100%);
+            border-radius: 10px;
             animation: cyCard1 1.65s cubic-bezier(.34,.9,.3,1) forwards 0s;
         }
         /* Card 2: slides in from the right (mirrored bevel for manga-page variety), holds, slides away */
         .cy-photo-card-2 {
-            clip-path: polygon(0% 0%, 91% 0%, 100% 100%, 9% 100%);
+            border-radius: 10px;
             animation: cyCard2 1.6s cubic-bezier(.34,.9,.3,1) forwards 1.25s;
         }
         /* Card 3: slides in and stays (final panel of the montage) */
         .cy-photo-card-3 {
-            clip-path: polygon(0 0, 100% 0, 100% 88%, 88% 100%, 0 100%);
+            border-radius: 10px;
             animation: cyCard3 .45s cubic-bezier(.22,.85,.24,1.1) forwards 2.45s;
         }
         @keyframes cyCard1 {
@@ -636,8 +648,9 @@
         /* Comic-panel style border: thick colored ink line + white gap + black outline, like a manga panel frame */
         .cy-panel-photo {
             position: relative; width: 100%; height: 100%; overflow: hidden; background: #111;
-            border: 3px solid #fff;
-            box-shadow: 0 0 0 2px #000, inset 0 0 0 1px rgba(0,0,0,.15), 0 0 0 5px var(--cy-panel-ink);
+            border: 4px solid var(--cy-panel-ink);
+            border-radius: 8px;
+            box-shadow: inset 0 0 0 2px #fff, 0 4px 14px rgba(0,0,0,.35);
         }
         .cy-photo-card-1 .cy-panel-photo { --cy-panel-ink: #F2C14E; }
         .cy-photo-card-2 .cy-panel-photo { --cy-panel-ink: #E85D75; }
@@ -650,6 +663,7 @@
         .cy-panel-tone { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(11,12,16,.4)); }
 
         .cy-intro-wordmark { position: relative; display: flex; perspective: 800px; z-index: 2; overflow: hidden; padding: 0 4px; }
+        @media (min-width: 1024px) { .cy-intro-wordmark span { font-size: 44px !important; } }
         .cy-intro-wordmark span {
             display: inline-block; font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
             font-weight: 900; font-size: clamp(26px, 7.5vw, 42px); letter-spacing: .01em; color: #ffffff;
@@ -719,13 +733,13 @@
     </div>
 
     <!-- WARNING BANNER -->
-    <div id="site-warning-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-start gap-2">
+    <div id="site-warning-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-2xl mb-3 border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-start gap-2 lg:max-w-2xl">
         <span id="site-warning-icon" class="text-lg leading-none"></span>
         <span id="site-warning-text" class="flex-1"></span>
     </div>
 
     <!-- PROMO BANNER -->
-    <div id="site-promo-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 text-black border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-center gap-2">
+    <div id="site-promo-banner" class="hidden w-full max-w-md md:max-w-lg lg:max-w-2xl mb-3 text-black border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-center gap-2">
         <span class="text-lg leading-none promo-emoji">🎉</span>
         <span id="site-promo-text" class="flex-1"></span>
     </div>
@@ -747,7 +761,7 @@
             </div>
         </div>
 
-        <header id="site-header" class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-3 mb-4 relative z-10 text-center">
+        <header id="site-header" class="w-full max-w-md md:max-w-lg lg:max-w-2xl mt-3 mb-4 relative z-10 text-center">
             <h1 id="brand-name-text" class="font-brand font-extrabold text-3xl sm:text-4xl tracking-wide text-white mb-2.5" style="text-shadow: 0 2px 12px rgba(0,0,0,0.35);">Cyronime</h1>
             <div id="hero-banner" class="relative w-full h-36 sm:h-40 rounded-2xl border-2.5 border-black overflow-hidden nb-shadow mb-2.5 bg-darkcard"
                  style="background-image: linear-gradient(180deg, rgba(11,12,16,0.08) 0%, rgba(11,12,16,0.35) 70%, rgba(11,12,16,0.7) 100%), url('https://media.base44.com/images/public/6a75321993e2d284381461e5/94f4b83b5_b81c678da1a7a24ed74c9752c1201fa4.jpg'); background-size: cover; background-position: center 12%;">
@@ -758,7 +772,7 @@
     </div>
 
     <!-- MAIN: SERVICE LIST -->
-    <main id="site-main" class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-1 space-y-4 z-10">
+    <main id="site-main" class="w-full max-w-md md:max-w-lg lg:max-w-2xl mt-1 space-y-4 z-10">
 
         <!-- SECTION TITLE -->
         <div class="section-title-wrap flex items-center gap-2.5 mb-1 reveal">
@@ -782,7 +796,7 @@
         </div>
 
         <!-- SERVICES GRID -->
-        <div id="services-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        <div id="services-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
 
         <!-- EMPTY STATE -->
         <div id="empty-state" class="hidden bg-darkcard border-2.5 border-black rounded-2xl p-8 text-center nb-shadow">
@@ -810,7 +824,7 @@
     </main>
 
     <!-- FOOTER -->
-    <footer id="site-footer" class="w-full max-w-md md:max-w-lg lg:max-w-xl mt-6 mb-2 text-center text-xs font-bold text-slate-400 space-y-2.5 relative z-10">
+    <footer id="site-footer" class="w-full max-w-md md:max-w-lg lg:max-w-2xl mt-6 mb-2 text-center text-xs font-bold text-slate-400 space-y-2.5 relative z-10">
         <div class="footer-badge inline-flex items-center gap-2 bg-darkcard text-slate-300 border-2 border-black px-3.5 py-1.5 rounded-xl font-bold text-[11px] nb-shadow-sm uppercase tracking-wider">
             <span id="footer-credit-text">Copyright by <strong class="font-heading text-cyberYellow">Akirax</strong></span>
         </div>
@@ -834,14 +848,20 @@
 
     <!-- LOADING OVERLAY -->
     <div id="loading-overlay" class="hidden fixed inset-0 bg-black/90 z-[110] flex items-center justify-center p-4">
-        <div class="bg-darkcard border-3 border-black rounded-2xl nb-shadow-lg flex flex-col items-center justify-center gap-4" style="width: 168px; height: 168px;">
+        <div style="width:160px; height:160px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; background:#141519; border:3px solid #000; border-radius:16px; box-shadow:6px 6px 0 0 #000;">
             <div class="nb-spinner"></div>
-            <h4 class="font-heading font-extrabold text-sm text-white">Memuat...</h4>
+            <h4 style="font-family:'Outfit',sans-serif; font-weight:800; font-size:14px; color:#fff; margin:0; text-align:center;">Memuat...</h4>
         </div>
     </div>
 
     <script>
         document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Hide loading overlay when returning via back button (bfcache restore)
+        window.addEventListener('pageshow', (e) => {
+            const ov = document.getElementById('loading-overlay');
+            if (ov) ov.classList.add('hidden');
+        });
 
         // ---- Scroll Reveal Observer ----
         const revealObserver = new IntersectionObserver((entries) => {
@@ -926,11 +946,10 @@
                         pDownX = e.clientX; pDownY = e.clientY; pDownT = Date.now();
                     });
                     card.addEventListener('click', (e) => {
-                        // If pointer moved more than 10px or took too long, it was a scroll/swipe — ignore
+                        // Only ignore if pointer moved a lot (scroll/swipe) — no time limit
                         const dx = Math.abs(e.clientX - pDownX);
                         const dy = Math.abs(e.clientY - pDownY);
-                        const dt = Date.now() - pDownT;
-                        if (dx > 10 || dy > 10 || dt > 500) { e.preventDefault(); return; }
+                        if (dx > 20 || dy > 20) { e.preventDefault(); return; }
                         if (isExternal) {
                             window.open(svc.page, '_blank', 'noopener,noreferrer');
                         } else {
@@ -1015,7 +1034,7 @@
                 const text = document.getElementById('site-warning-text');
                 text.textContent = warning.message;
                 const typeColors = { warning: 'border-amber-400 text-amber-400', danger: 'border-red-500 text-red-400', info: 'border-neonGreen text-neonGreen' };
-                banner.className = `w-full max-w-md md:max-w-lg lg:max-w-xl mb-3 border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-start gap-2 ${typeColors[warning.type] || typeColors.info}`;
+                banner.className = `w-full max-w-md md:max-w-lg lg:max-w-2xl mb-3 border-2.5 border-black rounded-xl p-3 px-4 nb-shadow font-bold text-sm flex items-start gap-2 lg:max-w-2xl ${typeColors[warning.type] || typeColors.info}`;
                 icon.innerHTML = warning.type === 'danger' ? '<i class="fas fa-exclamation-circle"></i>' : warning.type === 'warning' ? '<i class="fas fa-exclamation-triangle"></i>' : '<i class="fas fa-info-circle"></i>';
                 banner.classList.remove('hidden');
                 banner.classList.add('flex');
