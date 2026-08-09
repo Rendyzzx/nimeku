@@ -155,6 +155,15 @@
         #hero-flex #char-showcase { order: 1; }
         #hero-flex #site-header { order: 2; margin-top: 0; margin-bottom: 0; }
 
+        /* === FIX: center the main content blocks (they have max-width but no auto margin) === */
+        #site-main,
+        #site-footer,
+        #site-warning-banner,
+        #site-promo-banner {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
         #char-showcase {
             width: 100%;
             min-height: 230px;
