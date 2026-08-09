@@ -16,6 +16,11 @@
     <!-- Preload LCP hero image so it's discovered immediately -->
     <link rel="preload" as="image" fetchpriority="high" href="https://media.base44.com/images/public/6a75321993e2d284381461e5/94f4b83b5_b81c678da1a7a24ed74c9752c1201fa4.jpg">
 
+    <!-- Preload the 3 intro montage photos (small, ~35-65KB each) so the card-slide never pops/lags -->
+    <link rel="preload" as="image" fetchpriority="high" href="assets/intro/photo1.jpg">
+    <link rel="preload" as="image" href="assets/intro/photo2.jpg">
+    <link rel="preload" as="image" href="assets/intro/photo3.jpg">
+
     <!-- Prebuilt, purged Tailwind CSS (replaces the heavy cdn.tailwindcss.com runtime compiler) -->
     <link rel="stylesheet" href="/assets/css/app.css">
 
@@ -560,10 +565,24 @@
         <svg class="cy-corner cy-corner-bl" viewBox="0 0 64 64"><g fill="none" stroke="#5C8AA6" stroke-width="1.2"><path d="M6 38 L6 58 L26 58"/></g><g fill="#5C8AA6"><rect x="2" y="56" width="6" height="6" transform="rotate(45 5 59)"/><rect x="2" y="44" width="5" height="5" transform="rotate(45 4.5 46.5)"/><rect x="15" y="57" width="5" height="5" transform="rotate(45 17.5 59.5)"/></g></svg>
         <svg class="cy-corner cy-corner-br" viewBox="0 0 64 64"><g fill="none" stroke="#D6A755" stroke-width="1.2"><path d="M58 38 L58 58 L38 58"/></g><g fill="#D6A755"><rect x="56" y="56" width="6" height="6" transform="rotate(45 59 59)"/><rect x="57" y="44" width="5" height="5" transform="rotate(45 59.5 46.5)"/><rect x="44" y="57" width="5" height="5" transform="rotate(45 46.5 59.5)"/></g></svg>
 
-        <div class="cy-panel">
-            <div class="cy-panel-photo">
-                <img src="https://media.base44.com/images/public/6a77ba969ad66e37f8bff09b/3307e2207_d42874e2f96ff6f5171ecb74bae5cf06.jpg" alt="" width="200" height="240" loading="eager" decoding="async">
-                <div class="cy-panel-tone"></div>
+        <div class="cy-photo-stack">
+            <div class="cy-photo-card cy-photo-card-1">
+                <div class="cy-panel-photo">
+                    <img src="assets/intro/photo1.jpg" alt="" width="210" height="194" loading="eager" decoding="async" fetchpriority="high">
+                    <div class="cy-panel-tone"></div>
+                </div>
+            </div>
+            <div class="cy-photo-card cy-photo-card-2">
+                <div class="cy-panel-photo">
+                    <img src="assets/intro/photo2.jpg" alt="" width="210" height="240" loading="eager" decoding="async">
+                    <div class="cy-panel-tone"></div>
+                </div>
+            </div>
+            <div class="cy-photo-card cy-photo-card-3">
+                <div class="cy-panel-photo">
+                    <img src="assets/intro/photo3.jpg" alt="" width="210" height="227" loading="eager" decoding="async">
+                    <div class="cy-panel-tone"></div>
+                </div>
             </div>
         </div>
 
@@ -573,7 +592,6 @@
         <div class="cy-underline"></div>
         <div class="cy-intro-tagline">Premium Portal</div>
 
-        <div class="cy-curtain" id="cy-curtain"></div>
     </div>
 
     <div class="cy-page-reveal" id="cy-page-reveal">
@@ -585,7 +603,7 @@
         @keyframes cyFadeTo { to { opacity: 1; } }
 
         .cy-glow { position: absolute; border-radius: 50%; filter: blur(28px); opacity: 0; will-change: opacity; animation: cyGlowIn 1.1s ease forwards; }
-        .cy-glow-a { width: 280px; height: 280px; background: rgba(214,167,85,.22); top: 10%; left: 50%; transform: translateX(-50%); animation-delay: .05s; }
+        .cy-glow-a { width: 280px; height: 280px; background: rgba(214,167,85,.22); top: 10%; left: 50%; transform: translateX(-50%); animation-delay: .02s; }
         .cy-glow-b { width: 240px; height: 240px; background: rgba(92,138,166,.18); top: 32%; left: 50%; transform: translateX(-50%); animation-delay: .2s; }
         @keyframes cyGlowIn { to { opacity: 1; } }
 
@@ -594,32 +612,61 @@
         @keyframes cyDust { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: .55; } 80% { opacity: .35; } 100% { opacity: 0; transform: translateY(-90px); } }
 
         .cy-burst { position: absolute; top: 50%; left: 50%; width: 0; height: 0; pointer-events: none; }
-        .cy-burst svg { position: absolute; top: 50%; left: 50%; width: 400px; height: 400px; transform: translate(-50%,-50%) scale(0); opacity: 0; will-change: transform, opacity; animation: cyBurst .55s ease-out forwards .8s; }
+        .cy-burst svg { position: absolute; top: 50%; left: 50%; width: 400px; height: 400px; transform: translate(-50%,-50%) scale(0); opacity: 0; will-change: transform, opacity; animation: cyBurst .5s ease-out forwards .5s; }
         @keyframes cyBurst { 0% { transform: translate(-50%,-50%) scale(.2); opacity: 0; } 40% { opacity: .6; } 100% { transform: translate(-50%,-50%) scale(1.1); opacity: 0; } }
 
         .cy-corner { position: absolute; width: 46px; height: 46px; opacity: 0; will-change: transform, opacity; animation: cyCornerIn .5s ease forwards; }
-        .cy-corner-tl { top: 6%; left: 6%; transform: scale(.6); animation-delay: .15s; }
-        .cy-corner-tr { top: 6%; right: 6%; transform: scale(.6); animation-delay: .25s; }
-        .cy-corner-bl { bottom: 6%; left: 6%; transform: scale(.6); animation-delay: .25s; }
-        .cy-corner-br { bottom: 6%; right: 6%; transform: scale(.6); animation-delay: .35s; }
+        .cy-corner-tl { top: 6%; left: 6%; transform: scale(.6); animation-delay: .1s; }
+        .cy-corner-tr { top: 6%; right: 6%; transform: scale(.6); animation-delay: .15s; }
+        .cy-corner-bl { bottom: 6%; left: 6%; transform: scale(.6); animation-delay: .15s; }
+        .cy-corner-br { bottom: 6%; right: 6%; transform: scale(.6); animation-delay: .2s; }
         @keyframes cyCornerIn { to { opacity: 1; transform: scale(1); } }
 
-        .cy-panel {
+        /* ===== 3-photo manga panel montage (pure CSS timeline, GPU-only: transform + opacity) ===== */
+        .cy-photo-stack {
             position: relative; width: 158px; height: 196px; z-index: 2; margin-bottom: 24px;
-            clip-path: polygon(9% 0%, 100% 0%, 91% 100%, 0% 100%);
             filter: drop-shadow(0 16px 26px rgba(0,0,0,.55));
-            transform: translateY(24px) scale(.86); opacity: 0; will-change: transform, opacity;
-            animation: cyPanelIn .75s cubic-bezier(.22,.85,.24,1.1) forwards .22s;
         }
-        @keyframes cyPanelIn { to { transform: translateY(0) scale(1); opacity: 1; } }
+        .cy-photo-card {
+            position: absolute; inset: 0; will-change: transform, opacity;
+            opacity: 0;
+        }
+        /* Card 1: pops in first, holds, then slides away left as card 2 arrives */
+        .cy-photo-card-1 {
+            clip-path: polygon(9% 0%, 100% 0%, 91% 100%, 0% 100%);
+            animation: cyCard1 1.65s cubic-bezier(.34,.9,.3,1) forwards 0s;
+        }
+        /* Card 2: slides in from the right (mirrored bevel for manga-page variety), holds, slides away */
+        .cy-photo-card-2 {
+            clip-path: polygon(0% 0%, 91% 0%, 100% 100%, 9% 100%);
+            animation: cyCard2 1.6s cubic-bezier(.34,.9,.3,1) forwards 1.25s;
+        }
+        /* Card 3: slides in and stays (final panel of the montage) */
+        .cy-photo-card-3 {
+            clip-path: polygon(0 0, 100% 0, 100% 88%, 88% 100%, 0 100%);
+            animation: cyCard3 .45s cubic-bezier(.22,.85,.24,1.1) forwards 2.45s;
+        }
+        @keyframes cyCard1 {
+            0%    { opacity: 0; transform: translateX(18px) translateY(14px) scale(.9) rotate(-2deg); }
+            24%   { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotate(0deg); }
+            76%   { opacity: 1; transform: translateX(0) translateY(0) scale(1) rotate(0deg); }
+            100%  { opacity: 0; transform: translateX(-64px) scale(.94) rotate(-5deg); }
+        }
+        @keyframes cyCard2 {
+            0%    { opacity: 0; transform: translateX(70px) scale(.92) rotate(4deg); }
+            25%   { opacity: 1; transform: translateX(0) scale(1) rotate(0deg); }
+            75%   { opacity: 1; transform: translateX(0) scale(1) rotate(0deg); }
+            100%  { opacity: 0; transform: translateX(-64px) scale(.94) rotate(-4deg); }
+        }
+        @keyframes cyCard3 {
+            0%    { opacity: 0; transform: translateX(70px) scale(.92) rotate(3deg); }
+            100%  { opacity: 1; transform: translateX(0) scale(1) rotate(0deg); }
+        }
         .cy-panel-photo { position: relative; width: 100%; height: 100%; overflow: hidden; background: #111; box-shadow: inset 0 0 0 2px rgba(214,167,85,.5); }
         .cy-panel-photo img {
-            width: 100%; height: 100%; object-fit: cover; object-position: center 24%;
+            width: 100%; height: 100%; object-fit: cover; object-position: center 22%;
             filter: grayscale(1) contrast(1.15) brightness(1.05);
-            transform: scale(1.22) translateX(-5%); will-change: transform;
-            animation: cyPhotoSettle .95s cubic-bezier(.22,.85,.24,1) forwards .32s;
         }
-        @keyframes cyPhotoSettle { to { transform: scale(1.06) translateX(0); } }
         .cy-panel-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(155deg, rgba(214,167,85,.32), rgba(92,138,166,.26)); mix-blend-mode: color; }
         .cy-panel-tone { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(11,12,16,.4)); }
 
@@ -629,19 +676,19 @@
             font-weight: 900; font-size: clamp(26px, 7.5vw, 42px); letter-spacing: .01em; color: #F4E6C8;
             transform-style: preserve-3d; transform: rotateX(-100deg) translateY(10px) scale(.72); opacity: 0;
             will-change: transform, opacity; animation: cyLetterRise .6s cubic-bezier(.22,.85,.24,1.35) forwards;
-            animation-delay: calc(var(--i) * 60ms + 1050ms);
+            animation-delay: calc(var(--i) * 50ms + 3000ms);
             text-shadow: 0 1px 0 #b8873a, 0 2px 0 #a3763a, 0 3px 0 #8f653a, 0 4px 0 #7a543a, 0 6px 12px rgba(0,0,0,.5);
         }
         @keyframes cyLetterRise { 0% { opacity: 0; transform: rotateX(-100deg) translateY(12px) scale(.72); } 60% { opacity: 1; transform: rotateX(14deg) translateY(-4px) scale(1.07); } 100% { opacity: 1; transform: rotateX(0deg) translateY(0) scale(1); } }
 
-        .cy-underline { width: 90px; height: 3px; margin-top: 10px; border-radius: 3px; background: linear-gradient(90deg,#D6A755,#5C8AA6); transform: scaleX(0); transform-origin: center; will-change: transform; animation: cyUnderline .45s ease forwards 1.75s; z-index: 2; }
+        .cy-underline { width: 90px; height: 3px; margin-top: 10px; border-radius: 3px; background: linear-gradient(90deg,#D6A755,#5C8AA6); transform: scaleX(0); transform-origin: center; will-change: transform; animation: cyUnderline .4s ease forwards 4.0s; z-index: 2; }
         @keyframes cyUnderline { to { transform: scaleX(1); } }
 
-        .cy-intro-tagline { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: rgba(214,167,85,.7); margin-top: 12px; z-index: 2; opacity: 0; will-change: transform, opacity; animation: cyTaglineIn .5s ease forwards 2s; }
+        .cy-intro-tagline { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: rgba(214,167,85,.7); margin-top: 12px; z-index: 2; opacity: 0; will-change: transform, opacity; animation: cyTaglineIn .45s ease forwards 4.15s; }
         @keyframes cyTaglineIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        .cy-curtain { position: absolute; inset: 0; background: #0B0C10; z-index: 3; transform: translateY(0); will-change: transform; }
-        .cy-curtain.cy-curtain-lift { transition: transform .7s cubic-bezier(.6,0,.15,1); transform: translateY(-100%); }
+        /* Smooth fade-out for the entire intro */
+        .cy-intro.cy-intro-fading { transition: opacity .6s ease, transform .6s cubic-bezier(.4,0,.2,1); opacity: 0; transform: scale(1.04); }
 
         .cy-page-reveal { position: relative; width: 100%; min-height: 100vh; }
 
@@ -662,19 +709,16 @@
                 return;
             }
 
-            // Particles removed for performance — intro is now lightweight
-
-            // At 2.9s: curtain lifts bottom-to-top over 0.7s
+            // At 4.75s: start smooth fade-out of the entire intro (after the 3-photo montage + wordmark reveal)
             setTimeout(function () {
-                var curtain = document.getElementById('cy-curtain');
-                if (curtain) curtain.classList.add('cy-curtain-lift');
+                if (intro) intro.classList.add('cy-intro-fading');
                 document.body.classList.remove('cy-intro-loading');
-            }, 2900);
+            }, 4750);
 
-            // At 3.7s: intro fully removed from DOM
+            // At 5.4s: intro fully removed from DOM (after fade completes)
             setTimeout(function () {
                 if (intro) intro.remove();
-            }, 3700);
+            }, 5400);
         })();
     </script>
 
