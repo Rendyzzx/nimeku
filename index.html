@@ -389,53 +389,69 @@
 
         /* ================= SERVICE CARD ENHANCEMENTS ================= */
         #services-grid > div {
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
             position: relative;
         }
-        #services-grid > div::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 1rem;
-            background: linear-gradient(135deg, transparent 30%, rgba(214,167,85,0.04) 50%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
+        /* Lightweight tap feedback for touch devices — transform-only, GPU-accelerated, no repaint */
+        #services-grid > div {
+            transition: transform 0.12s ease;
         }
-        #services-grid > div:hover::before {
-            opacity: 1;
+        #services-grid > div:active {
+            transform: scale(0.97);
         }
-        #services-grid > div:hover {
-            border-color: rgba(214,167,85,0.4);
-        }
-        #services-grid > div .svc-icon {
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        #services-grid > div:hover .svc-icon {
-            transform: scale(1.12) rotate(-4deg);
-        }
-        #services-grid > div .svc-arrow {
-            transition: transform 0.2s ease;
-        }
-        #services-grid > div:hover .svc-arrow {
-            transform: translateX(4px);
-        }
-
-        /* Card shimmer on hover */
-        #services-grid > div::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 60%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
-            transition: left 0.6s ease;
-            pointer-events: none;
-            border-radius: 1rem;
-        }
-        #services-grid > div:hover::after {
-            left: 120%;
+        /* Richer hover effects — ONLY for devices with a real mouse (desktop). Touch devices skip
+           these entirely so tapping never triggers border-color/box-shadow/icon-rotate repaint chains. */
+        @media (hover: hover) and (pointer: fine) {
+            #services-grid > div {
+                transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+            }
+            .svc-card-hoverable:hover {
+                transform: translate(-1px, -1px);
+                box-shadow: 5px 5px 0px 0px #000000;
+            }
+            #services-grid > div::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: 1rem;
+                background: linear-gradient(135deg, transparent 30%, rgba(214,167,85,0.04) 50%, transparent 70%);
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                pointer-events: none;
+            }
+            #services-grid > div:hover::before {
+                opacity: 1;
+            }
+            #services-grid > div:hover {
+                border-color: rgba(214,167,85,0.4);
+            }
+            #services-grid > div .svc-icon {
+                transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            }
+            #services-grid > div:hover .svc-icon {
+                transform: scale(1.12) rotate(-4deg);
+            }
+            #services-grid > div .svc-arrow {
+                transition: transform 0.2s ease;
+            }
+            #services-grid > div:hover .svc-arrow {
+                transform: translateX(4px);
+            }
+            /* Card shimmer on hover */
+            #services-grid > div::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 60%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+                transition: left 0.6s ease;
+                pointer-events: none;
+                border-radius: 1rem;
+            }
+            #services-grid > div:hover::after {
+                left: 120%;
+            }
         }
 
         /* ================= WHATSAPP CARD ANIMATION ================= */
@@ -931,7 +947,7 @@
                 const isImageIcon = /^https?:\/\//.test(icon) || icon.startsWith('/');
 
                 const card = document.createElement('div');
-                card.className = `fade-up bg-darkcard border-2.5 border-black rounded-2xl p-4 nb-shadow relative overflow-hidden ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0px_0px_#000000] transition-all'}`;
+                card.className = `fade-up bg-darkcard border-2.5 border-black rounded-2xl p-4 nb-shadow relative overflow-hidden ${isLocked ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer svc-card-hoverable'}`;
                 card.style.animationDelay = `${i * 0.08}s`;
                 card.style.touchAction = 'manipulation';
                 card.style.WebkitTapHighlightColor = 'transparent';
