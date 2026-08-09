@@ -403,6 +403,66 @@ function buildRawGithubUrl(filePath) {
 const getSiteConfig = getWarningFile;
 const saveSiteConfig = saveWarningFile;
 
+// ---- Wrapper khusus statusQueue.json (antrian video status WA HD) ----
+// Format:
+//   { "items": [ { "id", "phone", "path" (path video di repo GitHub),
+//                  "status": "pending" | "sent",
+//                  "uploadedAt", "sentAt" } ] }
+// "path" disimpan lewat saveProjectBinaryFile ke folder status-videos/.
+
+const DEFAULT_STATUS_QUEUE = { items: [] };
+
+function parseStatusQueuePath() {
+  if (process.env.GITHUB_STATUS_QUEUE_PATH) {
+    return parsePath(process.env.GITHUB_STATUS_QUEUE_PATH, 'GITHUB_STATUS_QUEUE_PATH');
+  }
+  const { owner, repo, branch } = parseTokensPath();
+  return { owner, repo, branch, filePath: 'statusQueue.json' };
+}
+
+async function getStatusQueueFile() {
+  const loc = parseStatusQueuePath();
+  const { data, sha } = await getJsonFile(loc, DEFAULT_STATUS_QUEUE);
+  return { items: data.items || [], sha };
+}
+
+async function saveStatusQueueFile(items, sha, commitMessage) {
+  const loc = parseStatusQueuePath();
+  return saveJsonFile(loc, { items }, sha, commitMessage || 'Update statusQueue.json');
+}
+
+// ---- Wrapper khusus pairing.json (status pairing bot WhatsApp) ----
+// Format:
+//   { "phone", "status": "idle"|"requested"|"code_ready"|"paired",
+//     "code", "requestedAt", "pairedAt" }
+
+const DEFAULT_PAIRING = {
+  phone: '',
+  status: 'idle',
+  code: '',
+  requestedAt: null,
+  pairedAt: null
+};
+
+function parsePairingPath() {
+  if (process.env.GITHUB_PAIRING_PATH) {
+    return parsePath(process.env.GITHUB_PAIRING_PATH, 'GITHUB_PAIRING_PATH');
+  }
+  const { owner, repo, branch } = parseTokensPath();
+  return { owner, repo, branch, filePath: 'pairing.json' };
+}
+
+async function getPairingFile() {
+  const loc = parsePairingPath();
+  const { data, sha } = await getJsonFile(loc, DEFAULT_PAIRING);
+  return { pairing: { ...DEFAULT_PAIRING, ...data }, sha };
+}
+
+async function savePairingFile(pairing, sha, commitMessage) {
+  const loc = parsePairingPath();
+  return saveJsonFile(loc, pairing, sha, commitMessage || 'Update pairing.json');
+}
+
 export {
   getTokensFile,
   saveTokensFile,
@@ -420,5 +480,9 @@ export {
   deleteProjectFile,
   listProjectFiles,
   saveProjectBinaryFile,
-  buildRawGithubUrl
+  buildRawGithubUrl,
+  getStatusQueueFile,
+  saveStatusQueueFile,
+  getPairingFile,
+  savePairingFile
 };
