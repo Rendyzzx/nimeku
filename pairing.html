@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Pairing Bot WhatsApp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root{ --color-primary:#D6A755; --color-bg:#0B0C10; --card:#181A22; --wa-green:#25D366; }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; background:var(--color-bg); color:#fff;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:28px 16px;
+  }
+  .font-heading{ font-family:'Space Grotesk',sans-serif; letter-spacing:-0.02em; }
+  .card{
+    width:100%; max-width:440px; background:var(--card);
+    border:2.5px solid #000; border-radius:18px; padding:26px;
+    box-shadow:4px 4px 0 0 #000;
+  }
+  h1{ font-size:20px; margin:0 0 6px; font-weight:800; }
+  .sub{ color:#9aa0ac; font-size:13.5px; margin:0 0 22px; line-height:1.5; }
+
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#8a8f9b; margin-bottom:7px; }
+  .phone-wrap{ display:flex; border:2px solid #000; border-radius:10px; overflow:hidden; background:var(--color-bg); }
+  .phone-wrap .cc{ display:flex;align-items:center;padding:0 12px; background:#20222c; font-weight:700; font-size:14.5px; border-right:2px solid #000; }
+  .phone-wrap input, input.pat{
+    flex:1;border:none;outline:none;background:transparent;color:#fff;
+    padding:12px; font-size:15px; font-family:inherit; width:100%;
+  }
+  input.pat{ border:2px solid #000; border-radius:10px; background:var(--color-bg); }
+  .hint{ font-size:11.5px; color:#6b7280; margin-top:6px; }
+
+  .btn{
+    width:100%; border:2px solid #000; border-radius:12px; background:var(--color-primary);
+    color:#000; font-weight:800; font-size:14.5px; padding:14px; cursor:pointer;
+    box-shadow:2.5px 2.5px 0 0 #000; transition:transform .15s, box-shadow .15s;
+  }
+  .btn:active:not(:disabled){ transform:translate(2px,2px); box-shadow:1px 1px 0 0 #000; }
+  .btn:disabled{ opacity:.55; cursor:not-allowed; }
+
+  .msg{ margin-top:14px; font-size:13px; padding:10px 12px; border-radius:10px; border:2px solid #000; display:none; }
+  .msg.show{ display:block; }
+  .msg.err{ background:rgba(248,113,113,0.1); color:#f87171; }
+  .msg.info{ background:rgba(92,138,166,0.12); color:#93c5fd; }
+
+  .code-box{ display:none; text-align:center; margin-top:6px; }
+  .code-box.show{ display:block; }
+  .code-box .label{ font-size:12px; color:#9aa0ac; margin-bottom:8px; }
+  .code-box .code{
+    font-family:'Space Grotesk',sans-serif; font-size:30px; font-weight:800; letter-spacing:.08em;
+    background:var(--color-bg); border:2px solid #000; border-radius:12px; padding:14px;
+    color:var(--color-primary);
+  }
+  .code-box .steps{ text-align:left; font-size:12.5px; color:#9aa0ac; margin-top:14px; line-height:1.7; }
+
+  .paired-box{ display:none; text-align:center; }
+  .paired-box.show{ display:block; }
+  .paired-box i{ font-size:34px; color:var(--wa-green); margin-bottom:10px; }
+  .paired-box .num{ font-weight:800; color:#fff; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1 class="font-heading">Pairing Bot WhatsApp</h1>
+  <p class="sub">Hubungkan nomor WhatsApp kamu sebagai pengirim bot. Halaman ini hanya untuk admin.</p>
+
+  <div id="idleState">
+    <form id="pairForm">
+      <div class="field">
+        <label for="phone">Nomor WhatsApp</label>
+        <div class="phone-wrap">
+          <span class="cc">🇮🇩 +62</span>
+          <input type="tel" id="phone" placeholder="812xxxxxxx" inputmode="numeric" autocomplete="off">
+        </div>
+      </div>
+      <div class="field">
+        <label for="pat">GitHub PAT (kunci otorisasi admin)</label>
+        <input type="password" class="pat" id="pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+        <div class="hint">PAT yang sama dengan env var GITHUB_PAT di Vercel. Dipakai untuk verifikasi, tidak disimpan.</div>
+      </div>
+      <button type="submit" class="btn" id="submitBtn">Mulai Pairing</button>
+      <div class="msg" id="msg"></div>
+    </form>
+  </div>
+
+  <div id="waitingState" class="code-box">
+    <div class="label">Menunggu kode pairing dari bot...</div>
+  </div>
+
+  <div id="codeState" class="code-box">
+    <div class="label">Masukkan kode ini di WhatsApp</div>
+    <div class="code" id="codeText">— — — —</div>
+    <div class="steps">
+      1. Buka WhatsApp di nomor <span id="codePhone">+62...</span><br>
+      2. Ketuk <b>Setelan → Perangkat Tertaut → Tautkan Perangkat</b><br>
+      3. Pilih <b>"Tautkan dengan nomor telepon"</b><br>
+      4. Masukkan 8 digit kode di atas
+    </div>
+  </div>
+
+  <div id="pairedState" class="paired-box">
+    <i class="fas fa-circle-check"></i>
+    <p>Bot sudah terhubung ke nomor<br><span class="num" id="pairedPhone">-</span></p>
+  </div>
+</div>
+
+<script>
+const idleState    = document.getElementById('idleState');
+const waitingState = document.getElementById('waitingState');
+const codeState    = document.getElementById('codeState');
+const pairedState  = document.getElementById('pairedState');
+const form         = document.getElementById('pairForm');
+const phoneInput   = document.getElementById('phone');
+const patInput     = document.getElementById('pat');
+const submitBtn     = document.getElementById('submitBtn');
+const msg           = document.getElementById('msg');
+const codeText       = document.getElementById('codeText');
+const codePhone       = document.getElementById('codePhone');
+const pairedPhone       = document.getElementById('pairedPhone');
+
+let pollTimer = null;
+
+function showMsg(type, text){
+  msg.className = 'msg show ' + type;
+  msg.textContent = text;
+}
+
+function normalizePhone(raw){
+  let digits = raw.replace(/\D/g,'');
+  if(digits.startsWith('0')) digits = digits.slice(1);
+  if(digits.startsWith('62')) digits = digits.slice(2);
+  return digits;
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const digits = normalizePhone(phoneInput.value);
+  const pat = patInput.value.trim();
+
+  if(digits.length < 8){ showMsg('err','Nomor WhatsApp tidak valid.'); return; }
+  if(!pat){ showMsg('err','PAT wajib diisi.'); return; }
+
+  submitBtn.disabled = true;
+  msg.classList.remove('show');
+
+  try {
+    const res = await fetch('/api/pairing-request', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ phone: '62' + digits, pat })
+    });
+    const data = await res.json();
+    if(!data.success) throw new Error(data.error || 'Gagal memulai pairing.');
+
+    idleState.style.display = 'none';
+    waitingState.classList.add('show');
+    startPolling();
+  } catch(err){
+    showMsg('err', err.message);
+    submitBtn.disabled = false;
+  }
+});
+
+function startPolling(){
+  pollTimer = setInterval(async () => {
+    try {
+      const res = await fetch('/api/pairing-status');
+      const data = await res.json();
+      if(!data.success) return;
+
+      if(data.status === 'code_ready' && data.code){
+        waitingState.classList.remove('show');
+        codeState.classList.add('show');
+        codeText.textContent = data.code;
+        codePhone.textContent = '+' + data.phone;
+      }
+
+      if(data.status === 'paired'){
+        clearInterval(pollTimer);
+        waitingState.classList.remove('show');
+        codeState.classList.remove('show');
+        idleState.style.display = 'none';
+        pairedState.classList.add('show');
+        pairedPhone.textContent = '+' + data.phone;
+      }
+    } catch { /* diamkan, coba lagi di polling berikutnya */ }
+  }, 3000);
+}
+
+// Cek status begitu halaman dibuka — kalau sudah paired, langsung sembunyikan form.
+(async () => {
+  try {
+    const res = await fetch('/api/pairing-status');
+    const data = await res.json();
+    if(data.success && data.status === 'paired'){
+      idleState.style.display = 'none';
+      pairedState.classList.add('show');
+      pairedPhone.textContent = '+' + data.phone;
+    } else if(data.success && data.status === 'code_ready'){
+      idleState.style.display = 'none';
+      codeState.classList.add('show');
+      codeText.textContent = data.code;
+      codePhone.textContent = '+' + data.phone;
+      startPolling();
+    } else if(data.success && data.status === 'requested'){
+      idleState.style.display = 'none';
+      waitingState.classList.add('show');
+      startPolling();
+    }
+  } catch { /* biarkan tampil form default */ }
+})();
+</script>
+</body>
+</html>
